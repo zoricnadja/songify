@@ -27,30 +27,10 @@
   color: #1f2937;
 }
 
-.form-subtitle {
-  font-size: 14px;
-  color: #6b7280;
-}
-
 form {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.half-width {
-  width: 48%;
-}
-
-.name-section {
-  display: flex;
-  justify-content: space-between;
-  gap: 4%;
-  flex-wrap: wrap;
 }
 
 .submit-btn {
@@ -60,6 +40,7 @@ form {
   font-weight: 600;
   border-radius: 8px;
   transition: all 0.3s ease;
+  
 }
 
 .submit-btn:disabled {
@@ -68,11 +49,11 @@ form {
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #2563eb !important;
+  background-color: #3f76ed !important;
 }
 
 .server-error {
-  color: #dc2626;
+  color: #e03f3f;
   font-weight: 500;
   text-align: center;
 }
