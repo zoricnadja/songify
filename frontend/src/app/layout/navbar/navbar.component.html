@@ -1,0 +1,18 @@
+<mat-toolbar class="toolbar">
+  <app-menu></app-menu>
+  <div class="toolbar-buttons">
+    <ng-container *ngIf="role==undefined">
+      <button mat-icon-button [routerLink]="['login']">
+        <span class="material-icons">login</span>
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="role!=undefined">
+      <div class="nav-bar-logged-in">
+        <button mat-icon-button (click)="logout()">
+          <span class="material-icons">logout</span>
+        </button>
+      </div>
+    </ng-container>
+  </div>
+</mat-toolbar>

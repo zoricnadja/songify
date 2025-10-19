@@ -1,0 +1,34 @@
+<div class="outer-container">
+  <div class="verify-container">
+    <form [formGroup]="confirmForm" (ngSubmit)="onConfirm()" class="elegant-form">
+      <div class="form-header">
+        <h1>Verify Account</h1>
+        <p class="form-subtitle">Enter the verification code sent to your email</p>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" placeholder="Enter your username" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Verification Code</mat-label>
+        <input matInput formControlName="code" placeholder="Enter verification code" />
+      </mat-form-field>
+
+      <div *ngIf="confirmationError" class="server-error">
+        {{ confirmationError }}
+      </div>
+
+      <div class="button-group">
+        <button mat-flat-button color="primary" type="submit" [disabled]="!confirmForm.valid">
+          Verify
+        </button>
+
+        <button type="button" mat-stroked-button color="accent" (click)="resendCode()">
+          Resend Code
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
