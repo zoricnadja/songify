@@ -1,6 +1,7 @@
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Amplify } from 'aws-amplify';
 import { AppModule } from './app/app.module';
+import { environment } from './environment/environment';
 
 platformBrowserDynamic()
   .bootstrapModule(AppModule, {
@@ -11,8 +12,8 @@ platformBrowserDynamic()
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolId: 'eu-central-1_dMyCdtFX9',
-      userPoolClientId: 'e03ermp6cpmqdrg9g4vhjtlgs',
+      userPoolId: environment.userPoolClientId,
+      userPoolClientId: environment.userPoolClientId,
     },
   },
 });
