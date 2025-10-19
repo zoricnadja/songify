@@ -8,12 +8,36 @@ import {
   confirmSignUp,
   resendSignUpCode,
 } from 'aws-amplify/auth';
+import { jwtDecode } from 'jwt-decode';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor() {}
+  private roleSubject = new BehaviorSubject<string | null>(null);
+  role$: Observable<string | null> = this.roleSubject.asObservable();
+
+  constructor() {
+    this.loadRole();
+  }
+
+  public async loadRole() {
+    try {
+      const session = await fetchAuthSession();
+      const idToken = session.tokens?.idToken?.toString();
+      if (!idToken) {
+        this.roleSubject.next(null);
+        return;
+      }
+
+      const decoded: any = jwtDecode(idToken);
+      const role = decoded['custom:role'] || null;
+      this.roleSubject.next(role);
+    } catch (err) {
+      this.roleSubject.next(null);
+    }
+  }
 
   async register(user: any) {
     return await signUp({

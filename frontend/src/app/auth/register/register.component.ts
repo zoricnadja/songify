@@ -34,9 +34,9 @@ export class RegisterComponent {
         email: ['', [AngularValidators.required, AngularValidators.email]],
         password: ['', [AngularValidators.required, AngularValidators.minLength(8)]],
         confirmPassword: ['', AngularValidators.required],
-        givenName: [''],
-        familyName: [''],
-        birthdate: [''],
+        givenName: ['', AngularValidators.required],
+        familyName: ['', AngularValidators.required],
+        birthdate: ['', AngularValidators.required],
         role: ['user'],
       },
       { validators: passwordMatchValidator }

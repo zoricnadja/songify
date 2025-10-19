@@ -18,7 +18,6 @@ export class VerifyComponent {
       username: ['', Validators.required],
       code: ['', Validators.required]
     });
-    this.authService = authService
   }
 
   onConfirm() {

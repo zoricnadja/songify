@@ -1,0 +1,10 @@
+<button mat-icon-button [matMenuTriggerFor]="menu" aria-label="menu">
+  <mat-icon class="material-icons">menu</mat-icon>
+</button>
+<mat-menu #menu="matMenu" class="custom-menu" panelClass="custom-menu">
+  <ng-container *ngFor="let item of menuItems">
+    <button mat-menu-item [routerLink]="item.path" *ngIf="hasRole(item.roles)">
+      {{ item.label }}
+    </button>
+  </ng-container>
+</mat-menu>

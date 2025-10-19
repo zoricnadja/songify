@@ -1,0 +1,53 @@
+.toolbar {
+  display: flex;
+  height: auto;
+  justify-content: space-between;
+  align-items: flex-start;
+  background-color: #f5f5f5;
+  vertical-align: middle;
+  img {
+    height: 60%; 
+    cursor: pointer;
+    text-align: center;
+  }
+  padding-left: 1.5rem;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.toolbar-buttons button {
+  margin-right: 2.5rem;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.nav-menu{
+  border-radius: 0 !important;
+}
+
+.toolbar-title {
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.nav-bar-logged-in{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    span{font-size: 30px;}
+  }
+}
