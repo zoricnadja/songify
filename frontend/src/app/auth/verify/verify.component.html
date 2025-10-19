@@ -1,0 +1,17 @@
+<form [formGroup]="confirmForm" (ngSubmit)="onConfirm()">
+  <mat-form-field>
+    <mat-label>Username</mat-label>
+    <input matInput formControlName="username" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Verification Code</mat-label>
+    <input matInput formControlName="code" />
+  </mat-form-field>
+
+  <div *ngIf="confirmationError" class="error">{{ confirmationError }}</div>
+
+  <button mat-flat-button color="primary" type="submit">Confirm</button>
+
+  <button type="button" mat-button (click)="resendCode()">Resend Code</button>
+</form>

@@ -6,6 +6,7 @@ import {
   fetchAuthSession,
   getCurrentUser,
   confirmSignUp,
+  resendSignUpCode,
 } from 'aws-amplify/auth';
 
 @Injectable({
@@ -46,5 +47,26 @@ export class AuthService {
   async getToken() {
     const session = await fetchAuthSession();
     return session.tokens?.idToken?.toString();
+  }
+
+  async confirmSignUp(username: string, code: string) {
+    try {
+      await confirmSignUp({
+        username: username,
+        confirmationCode: code,
+      });
+      console.log('User confirmed successfully!');
+    } catch (error) {
+      console.error('Error confirming sign up:', error);
+    }
+  }
+
+  async resendCode(username: string) {
+    try {
+      await resendSignUpCode({ username: username });
+      console.log('Confirmation code resent');
+    } catch (err: any) {
+      console.log(err.message || 'Error resending code');
+    }
   }
 }

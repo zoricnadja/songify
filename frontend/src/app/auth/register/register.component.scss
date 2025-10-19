@@ -1,0 +1,78 @@
+.outer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f3f4f6, #e2e8f0);
+  padding: 2em;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 500px;
+  background-color: #ffffff;
+  padding: 2em;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-header h1 {
+  font-size: 28px;
+  margin-bottom: 5px;
+  color: #1f2937;
+}
+
+.form-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.half-width {
+  width: 48%;
+}
+
+.name-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 4%;
+  flex-wrap: wrap;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.submit-btn:disabled {
+  background-color: #9ca3af !important;
+  cursor: not-allowed;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #2563eb !important;
+}
+
+.server-error {
+  color: #dc2626;
+  font-weight: 500;
+  text-align: center;
+}
