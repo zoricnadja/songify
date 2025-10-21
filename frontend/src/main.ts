@@ -12,7 +12,7 @@ platformBrowserDynamic()
 Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolId: environment.userPoolClientId,
+      userPoolId: environment.userPoolId,
       userPoolClientId: environment.userPoolClientId,
     },
   },
