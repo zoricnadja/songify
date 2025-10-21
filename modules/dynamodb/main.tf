@@ -28,6 +28,14 @@ resource "aws_dynamodb_table" "artists" {
     name = "artist_id"
     type = "S"
   }
+
+  global_secondary_index {
+    name            = "ArtistIDIndex"
+    hash_key        = "artist_id"
+    projection_type = "ALL"
+    read_capacity   = var.read_capacity
+    write_capacity  = var.write_capacity
+  }
 }
 
 resource "aws_dynamodb_table" "albums" {
@@ -47,15 +55,23 @@ resource "aws_dynamodb_table" "albums" {
     name = "album_id"
     type = "S"
   }
+
+  global_secondary_index {
+    name            = "AlbumIDIndex"
+    hash_key        = "album_id"
+    projection_type = "ALL"
+    read_capacity   = var.read_capacity
+    write_capacity  = var.write_capacity
+  }
 }
 
-resource "aws_dynamodb_table" "songs" {
-  name           = "${var.project_name}-songs"
+resource "aws_dynamodb_table" "tracks" {
+  name           = "${var.project_name}-tracks"
   read_capacity  = var.read_capacity
   write_capacity = var.write_capacity
 
   hash_key  = "artist_id"
-  range_key = "song_id"
+  range_key = "track_id"
 
   attribute {
     name = "artist_id"
@@ -63,7 +79,7 @@ resource "aws_dynamodb_table" "songs" {
   }
 
   attribute {
-    name = "song_id"
+    name = "track_id"
     type = "S"
   }
 
@@ -75,7 +91,15 @@ resource "aws_dynamodb_table" "songs" {
   global_secondary_index {
     name            = "AlbumIndex"
     hash_key        = "album_id"
-    range_key       = "song_id"
+    range_key       = "track_id"
+    projection_type = "ALL"
+    read_capacity   = var.read_capacity
+    write_capacity  = var.write_capacity
+  }
+
+  global_secondary_index {
+    name            = "SongIDIndex"
+    hash_key        = "track_id"
     projection_type = "ALL"
     read_capacity   = var.read_capacity
     write_capacity  = var.write_capacity
