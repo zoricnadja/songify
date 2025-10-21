@@ -25,3 +25,9 @@ module "dynamodb" {
   read_capacity  = var.dynamodb_read_capacity
   write_capacity = var.dynamodb_write_capacity
 }
+
+module "cognito" {
+  source = "./modules/cognito"
+
+  project_name = var.project_name
+}
