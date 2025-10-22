@@ -5,7 +5,6 @@ from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
 
-
 class BackendStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, project_name: str = "songify",
@@ -33,6 +32,7 @@ class BackendStack(Stack):
             read_capacity=read_capacity,
             write_capacity=write_capacity,
         )
+
         artists_table.add_global_secondary_index(
             index_name="ArtistIDIndex",
             partition_key=dynamodb.Attribute(name="artist_id", type=dynamodb.AttributeType.STRING),
@@ -50,6 +50,7 @@ class BackendStack(Stack):
             read_capacity=read_capacity,
             write_capacity=write_capacity,
         )
+
         albums_table.add_global_secondary_index(
             index_name="AlbumIDIndex",
             partition_key=dynamodb.Attribute(name="album_id", type=dynamodb.AttributeType.STRING),
@@ -67,6 +68,7 @@ class BackendStack(Stack):
             read_capacity=read_capacity,
             write_capacity=write_capacity,
         )
+
         tracks_table.add_global_secondary_index(
             index_name="AlbumIndex",
             partition_key=dynamodb.Attribute(name="album_id", type=dynamodb.AttributeType.STRING),
@@ -75,9 +77,29 @@ class BackendStack(Stack):
             read_capacity=read_capacity,
             write_capacity=write_capacity
         )
+
         tracks_table.add_global_secondary_index(
             index_name="TrackIDIndex",
             partition_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
+            projection_type=dynamodb.ProjectionType.ALL,
+            read_capacity=read_capacity,
+            write_capacity=write_capacity
+        )
+
+        # Scores
+        scores_table = dynamodb.Table(
+            self, "ScoresTable",
+            table_name=f"{project_name}-scores",
+            partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="song_id", type=dynamodb.AttributeType.STRING),
+            read_capacity=read_capacity,
+            write_capacity=write_capacity,
+        )
+
+        scores_table.add_global_secondary_index(
+            index_name="ScoreGenreIndex",
+            partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
             projection_type=dynamodb.ProjectionType.ALL,
             read_capacity=read_capacity,
             write_capacity=write_capacity
