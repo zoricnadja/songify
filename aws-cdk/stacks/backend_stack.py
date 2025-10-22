@@ -4,6 +4,7 @@ from aws_cdk import aws_cognito as cognito
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
+from ..custom_constructs.tracks_construct import TracksConstruct
 
 class BackendStack(Stack):
 
@@ -91,7 +92,7 @@ class BackendStack(Stack):
             self, "ScoresTable",
             table_name=f"{project_name}-scores",
             partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
-            sort_key=dynamodb.Attribute(name="song_id", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
         )
@@ -190,17 +191,4 @@ class BackendStack(Stack):
             cognito_user_pools=[user_pool],
         )
 
-        test_resource = api.root.add_resource("test")
-        test_integration = apigateway.MockIntegration(
-            integration_responses=[{
-                'statusCode': '200',
-                'responseTemplates': {"application/json": '{"message": "ok"}'}
-            }],
-            request_templates={"application/json": '{"statusCode": 200}'}
-        )
-        test_resource.add_method(
-            "GET",
-            test_integration,
-            authorization_type=apigateway.AuthorizationType.COGNITO,
-            authorizer=authorizer
-        )
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table,)

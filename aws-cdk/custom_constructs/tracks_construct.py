@@ -3,7 +3,7 @@ from aws_cdk import (
     aws_apigateway as apigateway,
     aws_dynamodb as dynamodb
 )
-from awscdk.utils import create_lambda_function
+from ..utils.create_lambda import create_lambda_function
 
 class TracksConstruct(Construct):
     def __init__(
@@ -13,6 +13,7 @@ class TracksConstruct(Construct):
         api: apigateway.RestApi,
         authorizer,
         score_table: dynamodb.Table,
+        tracks_table: dynamodb.Table,
     ):
         super().__init__(scope, id)
 
@@ -31,9 +32,11 @@ class TracksConstruct(Construct):
             [],
             {
                 "SCORE_TABLE": score_table.table_name,
+                "TRACK_TABLE": tracks_table.table_name,
             }
         )
         score_table.grant_read_write_data(rate_track_lambda)
+        tracks_table.grant_read_data(rate_track_lambda)
 
         score_resource.add_method(
             "POST",
@@ -42,7 +45,7 @@ class TracksConstruct(Construct):
             authorization_type=apigateway.AuthorizationType.COGNITO
         )
 
-        # Get Track Score Lambda (GET /tracks/{trackId}/score?userId=xxx)
+        # Get Track Score Lambda (GET /tracks/{trackId}/score)
         get_track_score_lambda = create_lambda_function(
             self,
             "GetTrackScoreLambda",

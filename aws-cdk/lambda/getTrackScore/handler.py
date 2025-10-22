@@ -2,11 +2,12 @@ import json
 import os
 
 import boto3
+from datetime import datetime
 from decimal import Decimal
 
-table_name = os.environ["RATING_TABLE"]
+table_name = os.environ["SCORE_TABLE"]
 dynamodb = boto3.resource("dynamodb")
-rating_table = dynamodb.Table(table_name)
+score_table = dynamodb.Table(table_name)
 
 def decimal_default(obj):
     if isinstance(obj, Decimal):
@@ -16,25 +17,29 @@ def decimal_default(obj):
 def lambda_handler(event, context):
     headers = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PUT,DELETE",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization"
     }
-
+    claims = event.get("requestContext", {}).get("authorizer", {}).get("claims", {})
+    user_id = claims.get('sub')
+    if not user_id:
+        return {
+            "statusCode": 403,
+            "headers": headers,
+            "body": json.dumps({"message":"Forbidden: Insufficient permissions"})
+        }
     try:
-        song_id = event.get("pathParameters", {}).get("id")
-        user_id = event.get("queryStringParameters", {}).get("userId") if event.get("queryStringParameters") else None
+        track_id = event.get("pathParameters", {}).get("id")
 
-        if not user_id or not song_id:
+        if not track_id:
             return {
                 "statusCode": 400,
                 "headers": headers,
-                "body": json.dumps({"message": "userId and songId are required"})
+                "body": json.dumps({"message": "Track id is required"})
             }
 
-        response = rating_table.get_item(
+        response = score_table.get_item(
             Key={
-                "User": user_id,
-                "Song": song_id
+                "user_id": user_id,
+                "track_id": track_id
             }
         )
 
@@ -45,9 +50,10 @@ def lambda_handler(event, context):
                 "statusCode": 200,
                 "headers": headers,
                 "body": json.dumps({
-                    "userId": user_id,
-                    "songId": song_id,
-                    "rating": 0
+                    "user_id": user_id,
+                    "track_id": track_id,
+                    "score": 0,
+                    "timestamp": datetime.min
                 }, default=decimal_default)
             }
 
@@ -58,7 +64,7 @@ def lambda_handler(event, context):
         }
 
     except Exception as e:
-        print("Error loading rating:", str(e))
+        print("Error loading score:", str(e))
         return {
             "statusCode": 500,
             "headers": headers,
