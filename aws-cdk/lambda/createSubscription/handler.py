@@ -31,7 +31,6 @@ def lambda_handler(event, context):
         body = json.loads(event.get('body', '{}'))
         target_type = body.get('targetType')
         target_id = body.get('targetId')
-        target_name = body.get('targetName')
         if not target_id or not target_type:
             return {
                 "statusCode": 400,
