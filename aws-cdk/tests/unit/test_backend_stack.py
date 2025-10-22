@@ -4,7 +4,7 @@ from stacks import BackendStack
 
 
 # example tests. To run these tests, uncomment this file along with the example
-# resource in aws_cdk/aws_cdk_stack.py
+# resource in stacks/backend_stack.py
 def test_sqs_queue_created():
     app = core.App()
     stack = BackendStack(app, "aws-cdk")
