@@ -29,18 +29,38 @@ def lambda_handler(event, context):
         body = json.loads(event.get('body', '{}'))
         track_id = event['pathParameters']['id']
         score = body.get('score')
-
-        if not user_id or score is None:
+        if not track_id:
             return {
                 "statusCode": 400,
                 "headers": headers,
-                "body": json.dumps({"message": "userId and score are required"})
+                "body": json.dumps({"message": "Track id is required"})
+            }
+        
+        response = track_table.query(
+            IndexName='TrackIDIndex',
+            KeyConditionExpression=Key('track_id').eq(track_id)
+        )
+        items = response.get("Items")
+        if not items:
+            return {
+                "statusCode": 400,
+                "headers": headers,
+                "body": json.dumps({"message": "Track is not found"})
+            }
+        track = items[0]
+        
+        if score is None:
+            return {
+                "statusCode": 400,
+                "headers": headers,
+                "body": json.dumps({"message": "Score is required"})
             }
 
         score_table.put_item(
             Item={
                 "user_id": user_id,
                 "track_id": track_id,
+                "genre": track['genre'],
                 "score": Decimal(str(score)),
                 "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }

@@ -4,8 +4,8 @@ from aws_cdk import aws_cognito as cognito
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
-from custom_constructs.tracks_construct import TracksConstruct
 
+from songify_constructs.tracks_construct import TracksConstruct
 
 class BackendStack(Stack):
 
