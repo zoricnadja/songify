@@ -39,23 +39,23 @@ class SubscriptionsConstruct(Construct):
             authorization_type=apigateway.AuthorizationType.COGNITO
         )
 
-        # # Get Subscriptions
-        # get_subscriptions_lambda = create_lambda_function(
-        #     self,
-        #     "GetSubscriptionsLambda",
-        #     "handler.lambda_handler",
-        #     "lambda/getSubscriptions",
-        #     [],
-        #     {"SUBSCRIPTIONS_TABLE": subscriptions_table.table_name}
-        # )
-        # subscriptions_table.grant_read_write_data(get_subscriptions_lambda)
+        # Get Subscriptions
+        get_subscriptions_lambda = create_lambda_function(
+            self,
+            "GetSubscriptionsLambda",
+            "handler.lambda_handler",
+            "lambda/getSubscriptionsByUser",
+            [],
+            {"SUBSCRIPTIONS_TABLE": subscriptions_table.table_name}
+        )
+        subscriptions_table.grant_read_write_data(get_subscriptions_lambda)
 
-        # subscriptions_api_resource.add_method(
-        #     "GET",
-        #     apigateway.LambdaIntegration(get_subscriptions_lambda, proxy=True),
-        #     authorizer=authorizer,
-        #     authorization_type=apigateway.AuthorizationType.COGNITO
-        # )
+        subscriptions_api_resource.add_method(
+            "GET",
+            apigateway.LambdaIntegration(get_subscriptions_lambda, proxy=True),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
 
         # # Delete artist
         # delete_subscription_lambda = create_lambda_function(
