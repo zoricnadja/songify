@@ -5,6 +5,7 @@ from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
 
+from songify_constructs.tracks_construct import TracksConstruct
 
 class BackendStack(Stack):
 
@@ -19,20 +20,23 @@ class BackendStack(Stack):
         genres_table = dynamodb.Table(
             self, "GenresTable",
             table_name=f"{project_name}-genres",
-            partition_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
+            partition_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
         # Artists
         artists_table = dynamodb.Table(
             self, "ArtistsTable",
             table_name=f"{project_name}-artists",
-            partition_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
+            partition_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="artist_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY
         )
+
         artists_table.add_global_secondary_index(
             index_name="ArtistIDIndex",
             partition_key=dynamodb.Attribute(name="artist_id", type=dynamodb.AttributeType.STRING),
@@ -45,11 +49,13 @@ class BackendStack(Stack):
         albums_table = dynamodb.Table(
             self, "AlbumsTable",
             table_name=f"{project_name}-albums",
-            partition_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
+            partition_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="album_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
         )
+
         albums_table.add_global_secondary_index(
             index_name="AlbumIDIndex",
             partition_key=dynamodb.Attribute(name="album_id", type=dynamodb.AttributeType.STRING),
@@ -66,7 +72,9 @@ class BackendStack(Stack):
             sort_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
         )
+
         tracks_table.add_global_secondary_index(
             index_name="AlbumIndex",
             partition_key=dynamodb.Attribute(name="album_id", type=dynamodb.AttributeType.STRING),
@@ -75,9 +83,30 @@ class BackendStack(Stack):
             read_capacity=read_capacity,
             write_capacity=write_capacity
         )
+
         tracks_table.add_global_secondary_index(
             index_name="TrackIDIndex",
             partition_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
+            projection_type=dynamodb.ProjectionType.ALL,
+            read_capacity=read_capacity,
+            write_capacity=write_capacity
+        )
+
+        # Scores
+        scores_table = dynamodb.Table(
+            self, "ScoresTable",
+            table_name=f"{project_name}-scores",
+            partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
+            read_capacity=read_capacity,
+            write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
+        )
+
+        scores_table.add_global_secondary_index(
+            index_name="ScoreGenreIndex",
+            partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             projection_type=dynamodb.ProjectionType.ALL,
             read_capacity=read_capacity,
             write_capacity=write_capacity
@@ -160,6 +189,9 @@ class BackendStack(Stack):
             default_cors_preflight_options=apigateway.CorsOptions(
                 allow_origins=apigateway.Cors.ALL_ORIGINS,
                 allow_methods=apigateway.Cors.ALL_METHODS,
+            ),
+            endpoint_configuration=apigateway.EndpointConfiguration(
+                types=[apigateway.EndpointType.REGIONAL] 
             )
         )
 
@@ -168,17 +200,4 @@ class BackendStack(Stack):
             cognito_user_pools=[user_pool],
         )
 
-        test_resource = api.root.add_resource("test")
-        test_integration = apigateway.MockIntegration(
-            integration_responses=[{
-                'statusCode': '200',
-                'responseTemplates': {"application/json": '{"message": "ok"}'}
-            }],
-            request_templates={"application/json": '{"statusCode": 200}'}
-        )
-        test_resource.add_method(
-            "GET",
-            test_integration,
-            authorization_type=apigateway.AuthorizationType.COGNITO,
-            authorizer=authorizer
-        )
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table,)
