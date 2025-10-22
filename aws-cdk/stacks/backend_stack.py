@@ -6,6 +6,7 @@ from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
 
 from songify_constructs.tracks_construct import TracksConstruct
+from songify_constructs.subscriptions_construct import SubscriptionsConstruct
 
 class BackendStack(Stack):
 
@@ -112,6 +113,16 @@ class BackendStack(Stack):
             write_capacity=write_capacity
         )
 
+        # Subscriptions
+        subscriptions_table = dynamodb.Table(
+            self, "SubscriptionsTable",
+            table_name=f"{project_name}-subscriptions",
+            partition_key=dynamodb.Attribute(name="target", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            read_capacity=read_capacity,
+            write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
+        )
         # ----------------------------
         # Cognito User Pool
         # ----------------------------
@@ -200,4 +211,5 @@ class BackendStack(Stack):
             cognito_user_pools=[user_pool],
         )
 
-        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table,)
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table)
+        SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table, genres_table, artists_table)
