@@ -1,14 +1,10 @@
-from aws_cdk import (
-    Stack,
-    Duration,
-    RemovalPolicy,
-    CfnOutput,
-    aws_dynamodb as dynamodb,
-    aws_cognito as cognito,
-    aws_apigateway as apigateway,
-    aws_lambda as _lambda
-)
+from aws_cdk import CfnOutput, Duration, RemovalPolicy, Stack
+from aws_cdk import aws_apigateway as apigateway
+from aws_cdk import aws_cognito as cognito
+from aws_cdk import aws_dynamodb as dynamodb
+from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
+
 
 class BackendStack(Stack):
 
@@ -80,7 +76,7 @@ class BackendStack(Stack):
             write_capacity=write_capacity
         )
         tracks_table.add_global_secondary_index(
-            index_name="SongIDIndex",
+            index_name="TrackIDIndex",
             partition_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
             projection_type=dynamodb.ProjectionType.ALL,
             read_capacity=read_capacity,
