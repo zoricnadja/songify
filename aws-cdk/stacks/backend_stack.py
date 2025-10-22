@@ -20,7 +20,7 @@ class BackendStack(Stack):
         genres_table = dynamodb.Table(
             self, "GenresTable",
             table_name=f"{project_name}-genres",
-            partition_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
+            partition_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
         )
@@ -29,7 +29,7 @@ class BackendStack(Stack):
         artists_table = dynamodb.Table(
             self, "ArtistsTable",
             table_name=f"{project_name}-artists",
-            partition_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
+            partition_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="artist_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
@@ -47,7 +47,7 @@ class BackendStack(Stack):
         albums_table = dynamodb.Table(
             self, "AlbumsTable",
             table_name=f"{project_name}-albums",
-            partition_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
+            partition_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             sort_key=dynamodb.Attribute(name="album_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
@@ -101,7 +101,7 @@ class BackendStack(Stack):
         scores_table.add_global_secondary_index(
             index_name="ScoreGenreIndex",
             partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
-            sort_key=dynamodb.Attribute(name="genre_id", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             projection_type=dynamodb.ProjectionType.ALL,
             read_capacity=read_capacity,
             write_capacity=write_capacity
@@ -184,6 +184,9 @@ class BackendStack(Stack):
             default_cors_preflight_options=apigateway.CorsOptions(
                 allow_origins=apigateway.Cors.ALL_ORIGINS,
                 allow_methods=apigateway.Cors.ALL_METHODS,
+            ),
+            endpoint_configuration=apigateway.EndpointConfiguration(
+                types=[apigateway.EndpointType.REGIONAL] 
             )
         )
 

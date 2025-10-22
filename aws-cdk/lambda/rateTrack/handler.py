@@ -62,7 +62,7 @@ def lambda_handler(event, context):
                 "track_id": track_id,
                 "genre": track['genre'],
                 "score": Decimal(str(score)),
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
         )
 
