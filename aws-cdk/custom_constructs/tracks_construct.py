@@ -1,9 +1,8 @@
+from aws_cdk import aws_apigateway as apigateway
+from aws_cdk import aws_dynamodb as dynamodb
 from constructs import Construct
-from aws_cdk import (
-    aws_apigateway as apigateway,
-    aws_dynamodb as dynamodb
-)
-from ..utils.create_lambda import create_lambda_function
+from utils import create_lambda_function
+
 
 class TracksConstruct(Construct):
     def __init__(

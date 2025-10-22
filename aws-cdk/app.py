@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import os
 
-import aws_cdk as cdk
+from aws_cdk import App
 from stacks import BackendStack
 
-app = cdk.App()
+app = App()
 BackendStack(app, "BackendStack",
              project_name="songify",
              read_capacity=1,
