@@ -23,6 +23,7 @@ class BackendStack(Stack):
             partition_key=dynamodb.Attribute(name="genre", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
         # Artists
@@ -33,6 +34,7 @@ class BackendStack(Stack):
             sort_key=dynamodb.Attribute(name="artist_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY
         )
 
         artists_table.add_global_secondary_index(
@@ -51,6 +53,7 @@ class BackendStack(Stack):
             sort_key=dynamodb.Attribute(name="album_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
         albums_table.add_global_secondary_index(
@@ -69,6 +72,7 @@ class BackendStack(Stack):
             sort_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
         tracks_table.add_global_secondary_index(
@@ -96,6 +100,7 @@ class BackendStack(Stack):
             sort_key=dynamodb.Attribute(name="track_id", type=dynamodb.AttributeType.STRING),
             read_capacity=read_capacity,
             write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
         )
 
         scores_table.add_global_secondary_index(
