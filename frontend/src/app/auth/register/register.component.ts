@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../auth.service';
 import {
   AbstractControl,
-  FormControl,
   FormGroup,
   FormBuilder,
   ValidationErrors,
@@ -53,8 +52,7 @@ export class RegisterComponent {
       const user = { username, email, password, givenName, familyName, birthdate, role };
       try {
         await this.authService.register(user);
-        this.snackBar.open('Registration successful!', 'OK', { duration: 3000 });
-        this.router.navigate(['/verify']);
+        this.router.navigate(['/login']);
       } catch (error: any) {
         this.registerError = error.message || 'An unexpected error occurred during registration.';
         console.error('Registration failed:', error);
