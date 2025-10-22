@@ -38,6 +38,8 @@ module.exports = tseslint.config(
         },
       ],
       "prettier/prettier": "error",
+      "@angular-eslint/prefer-standalone": "off",
+      "@angular-eslint/prefer-inject": "off",
     },
   },
   {
