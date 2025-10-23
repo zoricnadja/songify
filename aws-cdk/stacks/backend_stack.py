@@ -123,6 +123,22 @@ class BackendStack(Stack):
             write_capacity=write_capacity,
             removal_policy=RemovalPolicy.DESTROY,
         )
+
+        subscriptions_table.add_global_secondary_index(
+            index_name="SubUserIdIndex",
+            partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            projection_type=dynamodb.ProjectionType.ALL,
+            read_capacity=read_capacity,
+            write_capacity=write_capacity
+        )
+        
+        subscriptions_table.add_global_secondary_index(
+            index_name="SubIdIndex",
+            partition_key=dynamodb.Attribute(name="subscription_id", type=dynamodb.AttributeType.STRING),
+            projection_type=dynamodb.ProjectionType.ALL,
+            read_capacity=read_capacity,
+            write_capacity=write_capacity
+        )
         # ----------------------------
         # Cognito User Pool
         # ----------------------------

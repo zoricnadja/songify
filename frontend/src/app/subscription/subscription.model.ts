@@ -5,7 +5,7 @@ export interface CreateSubscription {
 
 export interface Subscription {
   targetType: string;
-  targetId: string;
+  // targetId: string;
   targetName: string;
   createdAt: string;
   id: string;
