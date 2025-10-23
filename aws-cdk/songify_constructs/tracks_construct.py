@@ -150,8 +150,8 @@ class TracksConstruct(Construct):
         presign_resource.add_method(
             "POST",
             apigateway.LambdaIntegration(presign_upload_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         tracks_resource = api.root.add_resource("tracks")
@@ -170,15 +170,15 @@ class TracksConstruct(Construct):
                 "method.request.querystring.artist_id": False,
                 "method.request.querystring.album_id": False,
             },
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         tracks_resource.add_method(
             "POST",
             apigateway.LambdaIntegration(create_track_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         track_item_resource = tracks_resource.add_resource("{id}")
@@ -186,22 +186,22 @@ class TracksConstruct(Construct):
         track_item_resource.add_method(
             "GET",
             apigateway.LambdaIntegration(get_track_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         track_item_resource.add_method(
             "PUT",
             apigateway.LambdaIntegration(update_track_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         track_item_resource.add_method(
             "DELETE",
             apigateway.LambdaIntegration(delete_track_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         score_resource = track_item_resource.add_resource("score")

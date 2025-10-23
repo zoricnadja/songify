@@ -70,15 +70,15 @@ class AlbumsConstruct(Construct):
                 }
             ),
             request_parameters={"method.request.querystring.genre": False},
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         albums_resource.add_method(
             "POST",
             apigateway.LambdaIntegration(create_album_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         album_item_resource = albums_resource.add_resource("{id}")
@@ -86,20 +86,20 @@ class AlbumsConstruct(Construct):
         album_item_resource.add_method(
             "GET",
             apigateway.LambdaIntegration(get_album_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         album_item_resource.add_method(
             "PUT",
             apigateway.LambdaIntegration(update_album_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         album_item_resource.add_method(
             "DELETE",
             apigateway.LambdaIntegration(delete_album_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )

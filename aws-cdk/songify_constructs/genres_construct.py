@@ -48,15 +48,15 @@ class GenresConstruct(Construct):
         genres_resource.add_method(
             "GET",
             apigateway.LambdaIntegration(get_genres_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         genres_resource.add_method(
             "POST",
             apigateway.LambdaIntegration(create_genre_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
 
         genre_item_resource = genres_resource.add_resource("{genre}")
@@ -64,6 +64,6 @@ class GenresConstruct(Construct):
         genre_item_resource.add_method(
             "DELETE",
             apigateway.LambdaIntegration(delete_genre_lambda, proxy=True),
-            # authorization_type=apigateway.AuthorizationType.COGNITO,
-            # authorizer=authorizer
+            authorization_type=apigateway.AuthorizationType.COGNITO,
+            authorizer=authorizer
         )
