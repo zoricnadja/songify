@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     claims = event.get("requestContext", {}).get("authorizer", {}).get("claims", {})
     role = claims.get("custom:role")
     user_id = claims.get('sub')
-    user_email = claims.get('emial')
+    user_email = claims.get('email')
     if role != "user":
         return {
             "statusCode": 403,
