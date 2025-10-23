@@ -19,10 +19,10 @@ def handler(event, context):
     #     }
     try:
         body = json.loads(event.get('body', '{}'))
-        genre = body.get('name')
+        genre = body.get('genre')
         
         if not genre:
-            return {'statusCode': 400, 'body': json.dumps({'message': 'Missing genre name'}), 'headers': CORS_HEADERS}
+            return {'statusCode': 400, 'body': json.dumps({'message': 'Missing genre'}), 'headers': CORS_HEADERS}
         
         if table.get_item(Key={'genre': genre}).get('Item'):
             return {'statusCode': 409, 'body': json.dumps({'message': 'Genre already exists'}), 'headers': CORS_HEADERS}

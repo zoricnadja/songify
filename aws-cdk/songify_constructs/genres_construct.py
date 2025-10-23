@@ -59,7 +59,7 @@ class GenresConstruct(Construct):
             # authorizer=authorizer
         )
 
-        genre_item_resource = genres_resource.add_resource("{name}")
+        genre_item_resource = genres_resource.add_resource("{genre}")
 
         genre_item_resource.add_method(
             "DELETE",

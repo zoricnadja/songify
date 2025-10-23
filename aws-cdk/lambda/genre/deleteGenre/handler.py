@@ -18,7 +18,7 @@ def handler(event, context):
     #         'headers': CORS_HEADERS
     #     }
     try:
-        genre = event.get('pathParameters', {}).get('name')
+        genre = event.get('pathParameters', {}).get('genre')
         if not genre:
             return {'statusCode': 400, 'body': json.dumps({'message': 'Bad Request'}), 'headers': CORS_HEADERS}
         # Delete genre

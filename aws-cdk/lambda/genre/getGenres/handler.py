@@ -12,11 +12,11 @@ table = dynamodb.Table(table_name)
 def handler(event, context):
     try:
         response = table.scan()
-        genres = [{'name': genre['genre']} for genre in response.get('Items', [])]
+        genres = response.get('Items', [])
         return {
             'statusCode': 200,
             'headers': CORS_HEADERS,
-            'body': json.dumps(genres)
+            'body': json.dumps([genre['genre'] for genre in genres])
         }
     except Exception as e:
         return {
