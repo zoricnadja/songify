@@ -16,7 +16,14 @@ def handler(event, context):
             response = table.query(
                 KeyConditionExpression=Key('genre').eq(genre)
             )
-            artists = response.get('Items', [])
+            artists = []
+            for item in response.get('Items', []):
+                artists.append({
+                    'id': item['artist_id'],
+                    'name': item.get('name'),
+                    'biography': item.get('biography'),
+                    'genres': item.get('genres')
+                })
             return {'statusCode': 200, 'body': json.dumps(artists), 'headers': CORS_HEADERS}
         else:
             response = table.scan()
