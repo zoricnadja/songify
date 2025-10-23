@@ -256,7 +256,7 @@ class BackendStack(Stack):
         tracks_bucket = s3.Bucket(
             self,
             "TracksBucket",
-            bucket_name=f"{project_name}-tracks-bucket",
+            bucket_name=f"{project_name}-tracks-bucket-eu",
             cors=[s3.CorsRule(
                 allowed_methods=[s3.HttpMethods.GET, s3.HttpMethods.PUT, s3.HttpMethods.POST],
                 allowed_origins=["*"],
@@ -269,4 +269,4 @@ class BackendStack(Stack):
         GenresConstruct(self, "GenresConstruct", api, authorizer, genres_table)
         ArtistsConstruct(self, "ArtistsConstruct", api, authorizer, artists_table)
         AlbumsConstruct(self, "AlbumsConstruct", api, authorizer, albums_table, artists_table)
-        SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table, genres_table, artists_table)
+        SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table)
