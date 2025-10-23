@@ -1,5 +1,5 @@
 export const environment = {
-  apiHost: 'https://7itgqjb6f5.execute-api.eu-central-1.amazonaws.com/dev/',
-  userPoolId: 'eu-central-1_CouvE9SUg',
-  userPoolClientId: '1l92lu4virv6c5v0qbcg65nnoh',
+  apiUrl: 'https://ea5gt36ejg.execute-api.eu-west-3.amazonaws.com/dev',
+  userPoolId: 'eu-west-3_gYnVvNljf',
+  userPoolClientId: 'bdsln5774rb30lrhu6c9ne92p',
 };
