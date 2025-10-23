@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { GenreService } from '../genre.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GenreModalComponent } from '../genre-modal/genre-modal.component';
-import { Genre } from '../models/genre.model';
 
 @Component({
   selector: 'app-genre-list',
@@ -11,7 +10,7 @@ import { Genre } from '../models/genre.model';
   styleUrl: './genre-list.component.scss',
 })
 export class GenreListComponent implements OnInit {
-  genres: Genre[] = [];
+  genres: string[] = [];
 
   constructor(
     private genreService: GenreService,
@@ -48,16 +47,16 @@ export class GenreListComponent implements OnInit {
       });
   }
 
-  openEditModal(genre: Genre) {
+  openEditModal(genre: string) {
     this.dialog
       .open(GenreModalComponent, {
         width: '400px',
-        data: { ...genre },
+        data: { genre },
       })
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.genreService.updateGenre(genre.name, result).subscribe(
+          this.genreService.updateGenre(genre, result).subscribe(
             () => this.loadGenres(),
             (error) => alert(error.error.message)
           );
@@ -65,9 +64,9 @@ export class GenreListComponent implements OnInit {
       });
   }
 
-  deleteGenre(genre: Genre) {
+  deleteGenre(genre: string) {
     if (confirm('Are you sure you want to delete this genre?')) {
-      this.genreService.deleteGenre(genre.name).subscribe(
+      this.genreService.deleteGenre(genre).subscribe(
         () => this.loadGenres(),
         (error) => alert(error.error.message)
       );

@@ -8,18 +8,18 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './genre-modal.component.scss',
 })
 export class GenreModalComponent {
-  name = '';
+  genre = '';
 
   constructor(
     public dialogRef: MatDialogRef<GenreModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { name: string }
+    @Inject(MAT_DIALOG_DATA) public data: { genre: string }
   ) {
-    this.name = data?.name || '';
+    this.genre = data?.genre || '';
   }
 
   onSave() {
-    if (this.name.trim()) {
-      this.dialogRef.close({ name: this.name });
+    if (this.genre.trim()) {
+      this.dialogRef.close(this.genre);
     }
   }
 }
