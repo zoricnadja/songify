@@ -19,7 +19,7 @@ def lambda_handler(event, context):
         item = {
             "track_id": track_id,
             "artists": body["artists"],
-            "artist": body["artists"][0],
+            "artist_id": body["artist_id"],
             "genres": body["genres"],
             "track_name": body["trackName"],
             "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             MessageAttributes={
                 "contentType": {
                     "DataType": "String",
-                    "Value": "track"
+                    "StringValue": "track"
                 }
             },
             Subject="New track published"

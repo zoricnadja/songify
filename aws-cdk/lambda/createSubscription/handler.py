@@ -20,6 +20,7 @@ def lambda_handler(event, context):
     claims = event.get("requestContext", {}).get("authorizer", {}).get("claims", {})
     role = claims.get("custom:role")
     user_id = claims.get('sub')
+    user_email = claims.get('emial')
     if role != "user":
         return {
             "statusCode": 403,
@@ -67,6 +68,7 @@ def lambda_handler(event, context):
                 "subscription_id": str(uuid.uuid4()),
                 "target": f"{target_type}#{target_id}",
                 "user_id": user_id,
+                "user_email": user_email,
                 "subscription_type": target_type,
                 "target_name": target['artist_name'] if target_type == 'artist' else target['genre'],
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")

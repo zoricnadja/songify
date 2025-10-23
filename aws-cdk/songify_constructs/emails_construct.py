@@ -3,7 +3,8 @@ from aws_cdk import (
     aws_sns as sns,
     aws_sns_subscriptions as subs,
     aws_iam as iam, 
-    aws_dynamodb as dynamodb
+    aws_dynamodb as dynamodb,
+    aws_ses as ses
 )
 from utils.create_lambda import create_lambda_function
 
@@ -17,6 +18,11 @@ class EmailsConstruct(Construct):
     ):
         super().__init__(scope, id)
 
+        ses.EmailIdentity(
+            self,
+            "MyEmailIdentity",
+            identity=ses.Identity.email("zoricnadja03@gmail.com")
+        )
         # Send Email Lambda
         send_emails_lambda = create_lambda_function(
             self,
@@ -27,7 +33,7 @@ class EmailsConstruct(Construct):
             {
                 "SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
                 "SES_REGION": "eu-central-1",
-                "SES_SOURCE_EMAIL": "nadjazoric03@gmail.com"
+                "SES_SOURCE_EMAIL": "zoricnadja03@gmail.com"
             }
         )
         subscriptions_table.grant_read_data(send_emails_lambda)
