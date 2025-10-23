@@ -1,12 +1,15 @@
 from aws_cdk import CfnOutput, Duration, RemovalPolicy, Stack
 from aws_cdk import aws_apigateway as apigateway
 from aws_cdk import aws_cognito as cognito
+from aws_cdk import aws_sns as sns
+from aws_cdk import aws_sns_subscriptions as subs
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
 
 from songify_constructs.tracks_construct import TracksConstruct
 from songify_constructs.subscriptions_construct import SubscriptionsConstruct
+from songify_constructs.emails_construct import EmailsConstruct
 
 class BackendStack(Stack):
 
@@ -227,5 +230,7 @@ class BackendStack(Stack):
             cognito_user_pools=[user_pool],
         )
 
-        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table)
+        topic = sns.Topic(self, "NewContentPublished", topic_name="NewContentPublished")
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, topic)
         SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table, genres_table, artists_table)
+        EmailsConstruct(self, "EmailsConstruct", subscriptions_table, topic)
