@@ -15,7 +15,7 @@ export class SubscriptionsComponent implements OnInit {
 
   constructor(private subscriptionService: SubscriptionService) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.fetchSubscriptions();
   }
 

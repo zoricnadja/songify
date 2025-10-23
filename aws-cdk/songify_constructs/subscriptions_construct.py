@@ -44,7 +44,7 @@ class SubscriptionsConstruct(Construct):
             self,
             "GetSubscriptionsLambda",
             "handler.lambda_handler",
-            "lambda/getSubscriptionsByUser",
+            "lambda/getSubscriptions",
             [],
             {"SUBSCRIPTIONS_TABLE": subscriptions_table.table_name}
         )
@@ -57,23 +57,23 @@ class SubscriptionsConstruct(Construct):
             authorization_type=apigateway.AuthorizationType.COGNITO
         )
 
-        # # Delete artist
-        # delete_subscription_lambda = create_lambda_function(
-        #     self,
-        #     "DeleteSubscriptionLambda",
-        #     "handler.lambda_handler",
-        #     "lambda/deleteSubscription",
-        #     [],
-        #     {
-        #      "SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
-        #     }
-        # )
-        # subscriptions_table.grant_read_write_data(delete_subscription_lambda)
+        # Delete artist
+        delete_subscription_lambda = create_lambda_function(
+            self,
+            "DeleteSubscriptionLambda",
+            "handler.lambda_handler",
+            "lambda/deleteSubscription",
+            [],
+            {
+             "SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
+            }
+        )
+        subscriptions_table.grant_read_write_data(delete_subscription_lambda)
 
-        # subscriptions_id_resource = subscriptions_api_resource.add_resource("{id}")
-        # subscriptions_id_resource.add_method(
-        #     "DELETE",
-        #     apigateway.LambdaIntegration(delete_subscription_lambda, proxy=True),
-        #     authorizer=authorizer,
-        #     authorization_type=apigateway.AuthorizationType.COGNITO
-        # )
+        subscriptions_id_resource = subscriptions_api_resource.add_resource("{id}")
+        subscriptions_id_resource.add_method(
+            "DELETE",
+            apigateway.LambdaIntegration(delete_subscription_lambda, proxy=True),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )

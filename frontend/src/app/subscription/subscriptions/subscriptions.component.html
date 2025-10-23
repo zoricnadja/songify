@@ -1,10 +1,11 @@
 <div class="subscriptions-card">
   <h3 class="title">Subscriptions</h3>
-
-  <table class="subscriptions-table" aria-describedby="subscriptions-description">
-    <caption id="subscriptions-description" class="visually-hidden">
-      List of subscriptions with actions
-    </caption>
+  <h4 *ngIf="!subscriptions || subscriptions.length === 0">No subscriptions</h4>
+  <table
+    *ngIf="!loading && subscriptions"
+    class="subscriptions-table"
+    aria-describedby="subscriptions-description"
+  >
     <thead>
       <tr>
         <th scope="col">Type</th>
@@ -27,9 +28,6 @@
             <mat-icon>delete</mat-icon>
           </button>
         </td>
-      </tr>
-      <tr *ngIf="!subscriptions || subscriptions.length === 0">
-        <td colspan="3" class="empty">No subscriptions</td>
       </tr>
     </tbody>
   </table>
