@@ -2,12 +2,13 @@ import json
 import os
 
 import boto3
+from boto3.dynamodb.conditions import Key
 from datetime import datetime
 from decimal import Decimal
 
-table_name = os.environ["SCORE_TABLE"]
+table_name = os.environ["SUBSCRIPTIONS_TABLE"]
 dynamodb = boto3.resource("dynamodb")
-score_table = dynamodb.Table(table_name)
+subscriptions_table = dynamodb.Table(table_name)
 
 def decimal_default(obj):
     if isinstance(obj, Decimal):
@@ -27,40 +28,25 @@ def lambda_handler(event, context):
             "body": json.dumps({"message":"Forbidden: Insufficient permissions"})
         }
     try:
-        track_id = event.get("pathParameters", {}).get("id")
-
-        if not track_id:
-            return {
-                "statusCode": 400,
-                "headers": headers,
-                "body": json.dumps({"message": "Track id is required"})
-            }
-
-        response = score_table.get_item(
-            Key={
-                "user_id": user_id,
-                "track_id": track_id
-            }
+        response = subscriptions_table.query(
+            IndexName='SubUserIdIndex',
+                KeyConditionExpression=Key('user_id').eq(user_id)
         )
 
-        item = response.get("Item")
-
-        if not item:
-            return {
-                "statusCode": 200,
-                "headers": headers,
-                "body": json.dumps({
-                    "user_id": user_id,
-                    "track_id": track_id,
-                    "score": 0,
-                    "timestamp": datetime.min
-                }, default=decimal_default)
+        items = response.get("Items")
+        subscriptions = []
+        for item in items:
+            subscription = {
+                'id': item['subscription_id'],
+                'targetType': item['subscription_type'],
+                'targetName': item['target_name'],
+                'createdAt': item['created_at'],
             }
-
+            subscriptions.append(subscription)
         return {
             "statusCode": 200,
             "headers": headers,
-            "body": json.dumps(item, default=decimal_default)
+            "body": json.dumps(subscriptions)
         }
 
     except Exception as e:
