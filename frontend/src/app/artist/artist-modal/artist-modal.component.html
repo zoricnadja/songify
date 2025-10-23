@@ -1,0 +1,21 @@
+<h2>{{ data?.name ? 'Edit Artist' : 'Create Artist' }}</h2>
+<form (ngSubmit)="onSave()">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="name" name="name" required />
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Biography</mat-label>
+    <textarea matInput [(ngModel)]="biography" name="biography" rows="4"></textarea>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Genres</mat-label>
+    <mat-select [(ngModel)]="selectedGenres" name="genres" multiple>
+      <mat-option *ngFor="let genre of genres" [value]="genre">{{ genre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="modal-actions">
+    <button mat-raised-button color="primary" type="submit" [disabled]="!name.trim()">Save</button>
+    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+  </div>
+</form>
