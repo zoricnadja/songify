@@ -1,0 +1,47 @@
+<h2>{{ data?.id ? 'Edit Track' : 'Create Track' }}</h2>
+<form (ngSubmit)="onSave()">
+  <mat-form-field appearance="fill">
+    <mat-label>Title</mat-label>
+    <input matInput [(ngModel)]="title" name="title" required />
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Genres</mat-label>
+    <mat-select [(ngModel)]="selectedGenres" name="genres" multiple>
+      <mat-option *ngFor="let genre of genres" [value]="genre">{{ genre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Artists</mat-label>
+    <mat-select [(ngModel)]="selectedArtistIds" name="artists" multiple>
+      <mat-option *ngFor="let artist of artists" [value]="artist.id">{{ artist.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Album (optional)</mat-label>
+    <mat-select [(ngModel)]="selectedAlbumId" name="album">
+      <mat-option value="">None</mat-option>
+      <mat-option *ngFor="let album of albums" [value]="album.id">{{ album.title }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="file-upload">
+    <label for="image-upload">Image:</label>
+    <input id="image-upload" type="file" accept="image/*" (change)="onImageChange($event)" />
+    <img *ngIf="imagePreview" [src]="imagePreview" alt="Track Image" class="image-preview" />
+  </div>
+  <div class="file-upload">
+    <label for="file-upload">Track File:</label>
+    <input id="file-upload" type="file" accept="audio/*" (change)="onTrackFileChange($event)" required />
+    <div *ngIf="fileInfo.name">
+      <strong>File:</strong> {{ fileInfo.name }}<br />
+      <strong>Type:</strong> {{ fileInfo.type }}<br />
+      <strong>Size:</strong> {{ fileInfo.size | number }} bytes<br />
+      <strong>Created:</strong> {{ fileInfo.createdAt | date: 'short' }}<br />
+      <strong>Updated:</strong> {{ fileInfo.updatedAt | date: 'short' }}
+    </div>
+  </div>
+  <div class="modal-actions">
+    <button mat-raised-button color="primary" type="submit">Save</button>
+<!--    [disabled]="!title.trim() || !trackFile"-->
+    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+  </div>
+</form>
