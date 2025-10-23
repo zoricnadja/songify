@@ -1,0 +1,11 @@
+<h2>{{ data.name ? 'Edit Genre' : 'Create Genre' }}</h2>
+<form (ngSubmit)="onSave()">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="name" name="name" required />
+  </mat-form-field>
+  <div class="modal-actions">
+    <button mat-raised-button color="primary" type="submit" [disabled]="!name.trim()">Save</button>
+    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+  </div>
+</form>
