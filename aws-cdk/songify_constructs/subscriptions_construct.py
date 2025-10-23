@@ -17,7 +17,6 @@ class SubscriptionsConstruct(Construct):
         api: apigateway.RestApi,
         authorizer,
         subscriptions_table: dynamodb.Table,
-        topics_table: dynamodb.Table,
     ):
         super().__init__(scope, id)
 
@@ -32,11 +31,9 @@ class SubscriptionsConstruct(Construct):
             [],
             {
                 "SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
-                "TOPICS_TABLE": topics_table.table_name,
             }
         )
         subscriptions_table.grant_read_write_data(create_subscription_lambda)
-        topics_table.grant_read_write_data(create_subscription_lambda)
 
         # SNS permission, runtime-created topic ARNs 
         create_subscription_lambda.add_to_role_policy(
