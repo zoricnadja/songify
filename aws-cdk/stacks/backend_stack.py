@@ -5,6 +5,7 @@ from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_sns as sns
 from aws_cdk import aws_sns_subscriptions as subs
+from aws_cdk import aws_s3 as s3
 from constructs import Construct
 from songify_constructs.albums_construct import AlbumsConstruct
 from songify_constructs.artists_construct import ArtistsConstruct
@@ -249,7 +250,22 @@ class BackendStack(Stack):
             cognito_user_pools=[user_pool],
         )
 
-        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table)
+        # ----------------------------
+        # S3 Bucket for tracks/images
+        # ----------------------------
+        tracks_bucket = s3.Bucket(
+            self,
+            "TracksBucket",
+            bucket_name=f"{project_name}-tracks-bucket",
+            cors=[s3.CorsRule(
+                allowed_methods=[s3.HttpMethods.GET, s3.HttpMethods.PUT, s3.HttpMethods.POST],
+                allowed_origins=["*"],
+                allowed_headers=["*"],
+            )],
+            removal_policy=RemovalPolicy.DESTROY
+        )
+
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, artists_table, albums_table, tracks_bucket, region=self.region)
         GenresConstruct(self, "GenresConstruct", api, authorizer, genres_table)
         ArtistsConstruct(self, "ArtistsConstruct", api, authorizer, artists_table)
         AlbumsConstruct(self, "AlbumsConstruct", api, authorizer, albums_table, artists_table)
