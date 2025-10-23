@@ -27,7 +27,7 @@ def lambda_handler(event, context):
         content_type = attributes.get("contentType", {}).get("Value", "song")
         genres = message.get("genres", [])
         artists = message.get("artists", [])
-        title = message.get('title', 'Untitled Album')
+        track_name = message.get('track_name', 'Untitled')
         created_at = message.get('created_at', 'N/A')
 
         for genre in genres:
@@ -51,7 +51,7 @@ def lambda_handler(event, context):
                 send_email(
                     email,
                     f"New {content_type} from {artist}",
-                    f"A new {content_type} '{title}' was published on {created_at} by {artist} in genre {genre}!"
+                    f"A new {content_type} '{track_name}' was published on {created_at} by {artist} in genre {genre}!"
                 )
 
     return {"statusCode": 200, "body": "Emails sent"}
