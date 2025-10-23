@@ -30,7 +30,6 @@ def handler(event, context):
         album = {
             'id': album_id,
             'title': items[0].get('title'),
-            # 'release_date': items[0].get('release_date'),
             'artists': get_artists(items[0].get('artist_ids', [])),
             'genres': list({item['genre'] for item in items})
         }
