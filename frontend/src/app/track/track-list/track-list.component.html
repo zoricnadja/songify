@@ -1,0 +1,57 @@
+<div class="track-list-container">
+  <h2>Tracks</h2>
+  <button mat-raised-button color="primary" (click)="openCreateModal()">Add Track</button>
+  <table mat-table [dataSource]="tracks" class="mat-elevation-z8">
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>Title</th>
+      <td mat-cell *matCellDef="let track">{{ track.title }}</td>
+    </ng-container>
+    <ng-container matColumnDef="genres">
+      <th mat-header-cell *matHeaderCellDef>Genres</th>
+      <td mat-cell *matCellDef="let track">
+        <span *ngFor="let genre of track.genres; let last = last">{{ genre }}<span *ngIf="!last">, </span></span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="artists">
+      <th mat-header-cell *matHeaderCellDef>Artists</th>
+      <td mat-cell *matCellDef="let track">
+        <span *ngFor="let artist of track.artists; let last = last">{{ artist.name }}<span *ngIf="!last">, </span></span>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="album">
+      <th mat-header-cell *matHeaderCellDef>Album</th>
+      <td mat-cell *matCellDef="let track">{{ track.album || '-' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="image">
+      <th mat-header-cell *matHeaderCellDef>Image</th>
+      <td mat-cell *matCellDef="let track">
+        <img *ngIf="track.imageUrl" [src]="track.imageUrl" class="image-thumb" alt="Track Image" />
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="fileInfo">
+      <th mat-header-cell *matHeaderCellDef>File Info</th>
+      <td mat-cell *matCellDef="let track">
+        <div class="file-info">
+          <div><strong>Name:</strong> {{ track.file.name }}</div>
+          <div><strong>Type:</strong> {{ track.file.type }}</div>
+          <div><strong>Size:</strong> {{ track.file.size | number }} bytes</div>
+          <div><strong>Created At:</strong> {{ track.file.createdAt | date: 'short' }}</div>
+          <div><strong>Updated At:</strong> {{ track.file.updatedAt | date: 'short' }}</div>
+        </div>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let track">
+        <button mat-icon-button color="accent" (click)="openEditModal(track)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteTrack(track)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="['title', 'genres', 'artists', 'album', 'image', 'fileInfo', 'actions']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['title', 'genres', 'artists', 'album', 'image', 'fileInfo', 'actions'];"></tr>
+  </table>
+</div>

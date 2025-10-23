@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { RegisterComponent } from './auth/register/register.component';
 import { HomeComponent } from './layout/home/home.component';
 import { LoginComponent } from './auth/login/login.component';
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { SubscriptionsComponent } from './subscription/subscriptions/subscriptions.component';
 
 const routes: Routes = [
@@ -10,6 +11,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'admin', component: AdminPanelComponent },
   { path: 'subscriptions', component: SubscriptionsComponent },
 ];
 

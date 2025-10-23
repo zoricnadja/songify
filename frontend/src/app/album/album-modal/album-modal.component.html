@@ -1,0 +1,30 @@
+<h2>{{ data?.album ? 'Edit Album' : 'Create Album' }}</h2>
+<form (ngSubmit)="onSave()">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="title" name="name" required />
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Artists</mat-label>
+    <mat-select [(ngModel)]="selectedArtistIds" name="artists" required multiple>
+      <mat-option *ngFor="let artist of artists" [value]="artist.id">{{ artist.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Genres</mat-label>
+    <mat-select [(ngModel)]="selectedGenres" name="genres" required multiple>
+      <mat-option *ngFor="let genre of genres" [value]="genre">{{ genre }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="modal-actions">
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="!title.trim() || !selectedArtistIds || !selectedGenres"
+    >
+      Save
+    </button>
+    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+  </div>
+</form>

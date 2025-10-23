@@ -1,14 +1,18 @@
 from aws_cdk import CfnOutput, Duration, RemovalPolicy, Stack
 from aws_cdk import aws_apigateway as apigateway
 from aws_cdk import aws_cognito as cognito
-from aws_cdk import aws_sns as sns
-from aws_cdk import aws_sns_subscriptions as subs
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_sns as sns
+from aws_cdk import aws_sns_subscriptions as subs
+from aws_cdk import aws_s3 as s3
 from constructs import Construct
-
-from songify_constructs.tracks_construct import TracksConstruct
+from songify_constructs.albums_construct import AlbumsConstruct
+from songify_constructs.artists_construct import ArtistsConstruct
+from songify_constructs.genres_construct import GenresConstruct
 from songify_constructs.subscriptions_construct import SubscriptionsConstruct
+from songify_constructs.tracks_construct import TracksConstruct
+
 
 class BackendStack(Stack):
 
@@ -217,18 +221,52 @@ class BackendStack(Stack):
             rest_api_name="songifyApi",
             deploy_options=apigateway.StageOptions(stage_name="dev", throttling_rate_limit=100, throttling_burst_limit=200),
             default_cors_preflight_options=apigateway.CorsOptions(
-                allow_origins=apigateway.Cors.ALL_ORIGINS,
-                allow_methods=apigateway.Cors.ALL_METHODS,
+                allow_origins=["*"],
+                allow_methods=["*"],
+                allow_headers=["Authorization", "Content-Type"]
+            ),
+            default_method_options=apigateway.MethodOptions(
+                authorization_type=apigateway.AuthorizationType.NONE,
             ),
             endpoint_configuration=apigateway.EndpointConfiguration(
                 types=[apigateway.EndpointType.REGIONAL] 
             )
         )
 
+        api_gateway = api
+        for response_type in ["UNAUTHORIZED", "ACCESS_DENIED", "DEFAULT_4_XX", "DEFAULT_5_XX"]:
+            api_gateway.add_gateway_response(
+                f"{response_type}Response",
+                type=getattr(apigateway.ResponseType, response_type),
+                response_headers={
+                    "Access-Control-Allow-Origin": "'*'",
+                    "Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+                    "Access-Control-Allow-Methods": "'GET,OPTIONS'"
+                }
+            )
+
         authorizer = apigateway.CognitoUserPoolsAuthorizer(
             self, "CognitoAuthorizer",
             cognito_user_pools=[user_pool],
         )
 
-        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table)
+        # ----------------------------
+        # S3 Bucket for tracks/images
+        # ----------------------------
+        tracks_bucket = s3.Bucket(
+            self,
+            "TracksBucket",
+            bucket_name=f"{project_name}-tracks-bucket",
+            cors=[s3.CorsRule(
+                allowed_methods=[s3.HttpMethods.GET, s3.HttpMethods.PUT, s3.HttpMethods.POST],
+                allowed_origins=["*"],
+                allowed_headers=["*"],
+            )],
+            removal_policy=RemovalPolicy.DESTROY
+        )
+
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, artists_table, albums_table, tracks_bucket, region=self.region)
+        GenresConstruct(self, "GenresConstruct", api, authorizer, genres_table)
+        ArtistsConstruct(self, "ArtistsConstruct", api, authorizer, artists_table)
+        AlbumsConstruct(self, "AlbumsConstruct", api, authorizer, albums_table, artists_table)
         SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table, genres_table, artists_table)

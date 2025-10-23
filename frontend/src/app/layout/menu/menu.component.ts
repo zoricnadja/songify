@@ -10,7 +10,10 @@ import { MenuItem } from './menu-item.model';
   standalone: false,
 })
 export class MenuComponent {
-  menuItems: MenuItem[] = [{ path: '/', label: 'Home', roles: true }];
+  menuItems: MenuItem[] = [
+    { path: '/', label: 'Home', roles: true },
+    { path: '/admin', label: 'Admin Panel', roles: ['admin'] },
+  ];
   constructor(
     private router: Router,
     private authService: AuthService

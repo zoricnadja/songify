@@ -12,15 +12,15 @@ export class SubscriptionService {
   constructor(private httpClient: HttpClient) {}
 
   getSubscriptions(): Observable<Subscription[]> {
-    return this.httpClient.get<Subscription[]>(`${environment.apiHost}/subscriptions`);
+    return this.httpClient.get<Subscription[]>(`${environment.apiUrl}/subscriptions`);
   }
 
   create(subscription: CreateSubscription): Observable<Subscription> {
     console.log(subscription);
-    return this.httpClient.post<Subscription>(`${environment.apiHost}/subscriptions`, subscription);
+    return this.httpClient.post<Subscription>(`${environment.apiUrl}/subscriptions`, subscription);
   }
 
   delete(id: string): Observable<any> {
-    return this.httpClient.delete(`${environment.apiHost}/subscriptions/` + id);
+    return this.httpClient.delete(`${environment.apiUrl}/subscriptions/` + id);
   }
 }

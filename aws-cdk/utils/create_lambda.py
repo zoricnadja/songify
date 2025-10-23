@@ -16,14 +16,15 @@ def create_lambda_function(stack, id, handler, include_dir, layers, environment)
         runtime=_lambda.Runtime.PYTHON_3_9,
         layers=layers,
         handler=handler,
-        code=_lambda.Code.from_asset(include_dir,
-            bundling=BundlingOptions(
-                image=_lambda.Runtime.PYTHON_3_9.bundling_image,
-                command=[
-                    "bash", "-c",
-                    "pip install --no-cache -r requirements.txt -t /asset-output && cp -r . /asset-output"
-                ],
-            ),),
+        code=_lambda.Code.from_asset(include_dir),
+        # code=_lambda.Code.from_asset(include_dir,
+        #     bundling=BundlingOptions(
+        #         image=_lambda.Runtime.PYTHON_3_9.bundling_image,
+        #         command=[
+        #             "bash", "-c",
+        #             "pip install --no-cache -r requirements.txt -t /asset-output && cp -r . /asset-output"
+        #         ],
+        #     ),),
         memory_size=128,
         timeout=Duration.seconds(10),
         environment=environment,
