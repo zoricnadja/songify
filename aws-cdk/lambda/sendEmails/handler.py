@@ -64,4 +64,5 @@ def lambda_handler(event, context):
                     f"A new {content_type} '{track_name}' was published on {created_at} by {artist} in genre {genre}!"
                 )
 
-    return {"statusCode": 200, "body": "Emails sent"}
+    headers = {"Access-Control-Allow-Origin": "*"}
+    return {"statusCode": 200, "headers": headers, "body": "Emails sent"}

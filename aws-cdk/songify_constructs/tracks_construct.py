@@ -2,7 +2,8 @@ from constructs import Construct
 from aws_cdk import (
     aws_apigateway as apigateway,
     aws_dynamodb as dynamodb,
-    aws_sns as sns,
+    # aws_sns as sns,
+    aws_iam as iam
 )
 from utils.create_lambda import create_lambda_function
 
@@ -15,7 +16,6 @@ class TracksConstruct(Construct):
         authorizer,
         score_table: dynamodb.Table,
         tracks_table: dynamodb.Table,
-        topic: sns.Topic
     ):
         super().__init__(scope, id)
 
@@ -30,11 +30,22 @@ class TracksConstruct(Construct):
             [],
             {
                 "TRACKS_TABLE": tracks_table.table_name,
-                "SNS_TOPIC_ARN": topic.topic_arn,
             }
         )
         tracks_table.grant_write_data(create_track_lambda)
-        topic.grant_publish(create_track_lambda)
+        # SNS permission, runtime-created topic ARNs 
+        create_track_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "sns:CreateTopic",
+                    "sns:Subscribe",
+                    "sns:ListTopics",
+                    "sns:Publish",
+                    "sns:GetTopicAttributes",
+                ],
+                resources=["*"],  
+            )
+        )
 
         tracks_api_resource.add_method(
             "POST",

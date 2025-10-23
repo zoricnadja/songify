@@ -8,11 +8,15 @@ dynamodb = boto3.resource('dynamodb')
 sns = boto3.client('sns')
 
 tracks_table_name = os.environ['TRACKS_TABLE']
-SNS_TOPIC_ARN = os.environ['SNS_TOPIC_ARN']
 
 tracks_table = dynamodb.Table(tracks_table_name)
 
+def get_or_create_topic(topic_name):
+    topic_arn = sns.create_topic(Name=topic_name)['TopicArn']
+    return topic_arn
+
 def lambda_handler(event, context):
+    headers = {"Access-Control-Allow-Origin": "*"}
     try: 
         body = json.loads(event.get('body', '{}'))
         track_id = str(uuid.uuid4())
@@ -28,25 +32,30 @@ def lambda_handler(event, context):
 
         tracks_table.put_item(Item=item)
 
-        sns.publish(
-            TopicArn=SNS_TOPIC_ARN,
-            Message=json.dumps(item),
-            MessageAttributes={
-                "contentType": {
-                    "DataType": "String",
-                    "StringValue": "track"
-                }
-            },
-            Subject="New track published"
-        )
+        for genre in body["genres"]:
+            topic_arn = get_or_create_topic(f"genre_{genre}")
+            sns.publish(
+                TopicArn=topic_arn,
+                Message=json.dumps(item),
+                Subject=f"New track in {genre}"
+            )
+
+        for artist in body["artists"]:
+            topic_arn = get_or_create_topic(f"artist_{artist}")
+            sns.publish(
+                TopicArn=topic_arn,
+                Message=json.dumps(item),
+                Subject=f"New track from {artist}"
+            )
 
         return {
             "statusCode": 201,
+            "headers": headers,
             "body": json.dumps({"message": "Track created successfully", "item": item})
         }
     except Exception as e:
         return {
             "statusCode": 500,
-            "headers": {"Access-Control-Allow-Origin": "*"},
+            "headers": headers,
             "body": json.dumps({"error": str(e)})
         }

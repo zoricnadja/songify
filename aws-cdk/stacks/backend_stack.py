@@ -142,6 +142,15 @@ class BackendStack(Stack):
             read_capacity=read_capacity,
             write_capacity=write_capacity
         )
+
+        #Topics 
+        # topics_table = dynamodb.Table(
+        #     self, "TopicsTable",
+        #     partition_key=dynamodb.Attribute(name="target", type=dynamodb.AttributeType.STRING),
+        #     table_name="TopicsTable",
+        #     removal_policy=RemovalPolicy.DESTROY
+        # )
+
         # ----------------------------
         # Cognito User Pool
         # ----------------------------
@@ -230,7 +239,6 @@ class BackendStack(Stack):
             cognito_user_pools=[user_pool],
         )
 
-        topic = sns.Topic(self, "NewContentPublished", topic_name="NewContentPublished")
-        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, topic)
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table)
         SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table, genres_table, artists_table)
-        EmailsConstruct(self, "EmailsConstruct", subscriptions_table, topic)
+        # EmailsConstruct(self, "EmailsConstruct", subscriptions_table, topic)

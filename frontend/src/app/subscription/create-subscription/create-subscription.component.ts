@@ -55,10 +55,15 @@ export class CreateSubscriptionComponent implements OnInit {
     if (!this.form.valid) return;
 
     const value = this.form.value;
+    const name =
+      value.type == 'artist'
+        ? this.artists.find((a) => (a.id = value.targetId))?.name
+        : value.targetId;
 
     const subscriptionDto: CreateSubscription = {
       targetId: value.targetId,
       targetType: value.type,
+      targetName: name,
     };
 
     this.dialogRef.close(subscriptionDto);
