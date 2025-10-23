@@ -13,6 +13,7 @@ import { GenreModule } from './genre/genre.module';
 import { TrackModule } from './track/track.module';
 import { AdminModule } from './admin/admin.module';
 import { MaterialModule } from './infrastructure/material/material.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -27,6 +28,7 @@ import { MaterialModule } from './infrastructure/material/material.module';
     LayoutModule,
     MaterialModule,
     TrackModule,
+    SubscriptionModule,
   ],
   providers: [
     AuthGuard,

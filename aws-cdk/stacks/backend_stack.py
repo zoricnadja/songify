@@ -1,11 +1,15 @@
 from aws_cdk import CfnOutput, Duration, RemovalPolicy, Stack
 from aws_cdk import aws_apigateway as apigateway
 from aws_cdk import aws_cognito as cognito
+from aws_cdk import aws_sns as sns
+from aws_cdk import aws_sns_subscriptions as subs
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
 
 from songify_constructs.tracks_construct import TracksConstruct
+from songify_constructs.subscriptions_construct import SubscriptionsConstruct
+from songify_constructs.emails_construct import EmailsConstruct
 
 class BackendStack(Stack):
 
@@ -112,6 +116,32 @@ class BackendStack(Stack):
             write_capacity=write_capacity
         )
 
+        # Subscriptions
+        subscriptions_table = dynamodb.Table(
+            self, "SubscriptionsTable",
+            table_name=f"{project_name}-subscriptions",
+            partition_key=dynamodb.Attribute(name="target", type=dynamodb.AttributeType.STRING),
+            sort_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            read_capacity=read_capacity,
+            write_capacity=write_capacity,
+            removal_policy=RemovalPolicy.DESTROY,
+        )
+
+        subscriptions_table.add_global_secondary_index(
+            index_name="SubUserIdIndex",
+            partition_key=dynamodb.Attribute(name="user_id", type=dynamodb.AttributeType.STRING),
+            projection_type=dynamodb.ProjectionType.ALL,
+            read_capacity=read_capacity,
+            write_capacity=write_capacity
+        )
+        
+        subscriptions_table.add_global_secondary_index(
+            index_name="SubIdIndex",
+            partition_key=dynamodb.Attribute(name="subscription_id", type=dynamodb.AttributeType.STRING),
+            projection_type=dynamodb.ProjectionType.ALL,
+            read_capacity=read_capacity,
+            write_capacity=write_capacity
+        )
         # ----------------------------
         # Cognito User Pool
         # ----------------------------
@@ -200,4 +230,7 @@ class BackendStack(Stack):
             cognito_user_pools=[user_pool],
         )
 
-        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table,)
+        topic = sns.Topic(self, "NewContentPublished", topic_name="NewContentPublished")
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, topic)
+        SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table, genres_table, artists_table)
+        EmailsConstruct(self, "EmailsConstruct", subscriptions_table, topic)

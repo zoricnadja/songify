@@ -1,7 +1,8 @@
 from constructs import Construct
 from aws_cdk import (
     aws_apigateway as apigateway,
-    aws_dynamodb as dynamodb
+    aws_dynamodb as dynamodb,
+    aws_sns as sns,
 )
 from utils.create_lambda import create_lambda_function
 
@@ -14,10 +15,33 @@ class TracksConstruct(Construct):
         authorizer,
         score_table: dynamodb.Table,
         tracks_table: dynamodb.Table,
+        topic: sns.Topic
     ):
         super().__init__(scope, id)
 
         tracks_api_resource = api.root.add_resource("tracks")
+
+        # Create Track Lambda (POST /tracks)
+        create_track_lambda = create_lambda_function(
+            self,
+            "CreateTrackLambda",
+            "handler.lambda_handler",
+            "lambda/createTrack",
+            [],
+            {
+                "TRACKS_TABLE": tracks_table.table_name,
+                "SNS_TOPIC_ARN": topic.topic_arn,
+            }
+        )
+        tracks_table.grant_write_data(create_track_lambda)
+        topic.grant_publish(create_track_lambda)
+
+        tracks_api_resource.add_method(
+            "POST",
+            apigateway.LambdaIntegration(create_track_lambda, proxy=True),
+            authorizer=authorizer,
+            authorization_type=apigateway.AuthorizationType.COGNITO
+        )
 
         track_id_resource = tracks_api_resource.add_resource("{id}")
 
