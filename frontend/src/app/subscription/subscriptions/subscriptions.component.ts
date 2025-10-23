@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from '../subscription.model';
+import { CreateSubscription, Subscription } from '../subscription.model';
 import { SubscriptionService } from '../subscription.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateSubscriptionComponent } from '../create-subscription/create-subscription.component';
 
 @Component({
   selector: 'app-subscriptions',
@@ -13,7 +15,10 @@ export class SubscriptionsComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
-  constructor(private subscriptionService: SubscriptionService) {}
+  constructor(
+    private dialog: MatDialog,
+    private subscriptionService: SubscriptionService
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.fetchSubscriptions();
@@ -45,6 +50,24 @@ export class SubscriptionsComponent implements OnInit {
         console.error('Error deleting subscription', err);
         alert('Error deleting subscription');
       },
+    });
+  }
+
+  openAddDialog(): void {
+    const dialogRef = this.dialog.open(CreateSubscriptionComponent, { width: '400px' });
+
+    dialogRef.afterClosed().subscribe((result: CreateSubscription | undefined) => {
+      if (!result) return;
+
+      this.subscriptionService.create(result).subscribe({
+        next: () => {
+          this.fetchSubscriptions();
+        },
+        error: (err) => {
+          console.error('Error while creating subscription', err);
+          alert('Error while creating subscription.');
+        },
+      });
     });
   }
 }

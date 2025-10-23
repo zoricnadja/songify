@@ -1,5 +1,8 @@
 <div class="subscriptions-card">
   <h3 class="title">Subscriptions</h3>
+  <button mat-raised-button color="primary" (click)="openAddDialog()">
+    <mat-icon>add</mat-icon> Add Subscription
+  </button>
   <h4 *ngIf="!subscriptions || subscriptions.length === 0">No subscriptions</h4>
   <table
     *ngIf="!loading && subscriptions"
