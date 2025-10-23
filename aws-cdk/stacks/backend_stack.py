@@ -4,6 +4,8 @@ from aws_cdk import aws_cognito as cognito
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
+
+from songify_constructs.albums_construct import AlbumsConstruct
 from songify_constructs.genres_construct import GenresConstruct
 from songify_constructs.tracks_construct import TracksConstruct
 from songify_constructs.artists_construct import ArtistsConstruct
@@ -221,3 +223,4 @@ class BackendStack(Stack):
         TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table,)
         GenresConstruct(self, "GenresConstruct", api, authorizer, genres_table)
         ArtistsConstruct(self, "ArtistsConstruct", api, authorizer, artists_table)
+        AlbumsConstruct(self, "AlbumsConstruct", api, authorizer, albums_table, artists_table)
