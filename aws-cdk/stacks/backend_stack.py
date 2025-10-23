@@ -4,8 +4,9 @@ from aws_cdk import aws_cognito as cognito
 from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_lambda as _lambda
 from constructs import Construct
-
+from songify_constructs.genres_construct import GenresConstruct
 from songify_constructs.tracks_construct import TracksConstruct
+
 
 class BackendStack(Stack):
 
@@ -187,13 +188,29 @@ class BackendStack(Stack):
             rest_api_name="songifyApi",
             deploy_options=apigateway.StageOptions(stage_name="dev", throttling_rate_limit=100, throttling_burst_limit=200),
             default_cors_preflight_options=apigateway.CorsOptions(
-                allow_origins=apigateway.Cors.ALL_ORIGINS,
-                allow_methods=apigateway.Cors.ALL_METHODS,
+                allow_origins=["*"],
+                allow_methods=["*"],
+                allow_headers=["Authorization", "Content-Type"]
+            ),
+            default_method_options=apigateway.MethodOptions(
+                authorization_type=apigateway.AuthorizationType.NONE,
             ),
             endpoint_configuration=apigateway.EndpointConfiguration(
                 types=[apigateway.EndpointType.REGIONAL] 
             )
         )
+
+        api_gateway = api
+        for response_type in ["UNAUTHORIZED", "ACCESS_DENIED", "DEFAULT_4_XX", "DEFAULT_5_XX"]:
+            api_gateway.add_gateway_response(
+                f"{response_type}Response",
+                type=getattr(apigateway.ResponseType, response_type),
+                response_headers={
+                    "Access-Control-Allow-Origin": "'*'",
+                    "Access-Control-Allow-Headers": "'Authorization,Content-Type'",
+                    "Access-Control-Allow-Methods": "'GET,OPTIONS'"
+                }
+            )
 
         authorizer = apigateway.CognitoUserPoolsAuthorizer(
             self, "CognitoAuthorizer",
@@ -201,3 +218,4 @@ class BackendStack(Stack):
         )
 
         TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table,)
+        GenresConstruct(self, "GenresConstruct", api, authorizer, genres_table)
