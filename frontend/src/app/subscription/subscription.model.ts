@@ -1,6 +1,7 @@
 export interface CreateSubscription {
   targetType: string;
   targetId: string;
+  targetName: string;
 }
 
 export interface Subscription {

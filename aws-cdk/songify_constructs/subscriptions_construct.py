@@ -3,6 +3,13 @@ from aws_cdk import aws_apigateway as apigateway,aws_iam as iam, aws_lambda as _
 from utils.create_lambda import create_lambda_function
 
 class SubscriptionsConstruct(Construct):
+    """ 
+    SubscriptionsConstruct: 
+    - Creates a Lambda that processes POST /subscriptions (create subscription) 
+    - Gives that Lambda access to subscriptions_table and topics_table 
+    - Gives that Lambda the necessary SNS permissions (create topic, subscribe) 
+    - Adds API resource /subscriptions and POST method 
+    """
     def __init__(
         self,
         scope: Construct,
@@ -10,8 +17,7 @@ class SubscriptionsConstruct(Construct):
         api: apigateway.RestApi,
         authorizer,
         subscriptions_table: dynamodb.Table,
-        genres_table: dynamodb.Table,
-        artists_table: dynamodb.Table
+        topics_table: dynamodb.Table,
     ):
         super().__init__(scope, id)
 
@@ -24,13 +30,27 @@ class SubscriptionsConstruct(Construct):
             "handler.lambda_handler",
             "lambda/createSubscription",
             [],
-            {"SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
-            "GENRES_TABLE": genres_table.table_name,
-            "ARTISTS_TABLE": artists_table.table_name,}
+            {
+                "SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
+                "TOPICS_TABLE": topics_table.table_name,
+            }
         )
         subscriptions_table.grant_read_write_data(create_subscription_lambda)
-        genres_table.grant_read_write_data(create_subscription_lambda)
-        artists_table.grant_read_write_data(create_subscription_lambda)
+        topics_table.grant_read_write_data(create_subscription_lambda)
+
+        # SNS permission, runtime-created topic ARNs 
+        create_subscription_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "sns:CreateTopic",
+                    "sns:Subscribe",
+                    "sns:ListTopics",
+                    "sns:Publish",
+                    "sns:GetTopicAttributes",
+                ],
+                resources=["*"],  
+            )
+        )
 
         subscriptions_api_resource.add_method(
             "POST",
@@ -38,6 +58,7 @@ class SubscriptionsConstruct(Construct):
             authorizer=authorizer,
             authorization_type=apigateway.AuthorizationType.COGNITO
         )
+        self.create_subscription_lambda = create_subscription_lambda
 
         # Get Subscriptions
         get_subscriptions_lambda = create_lambda_function(

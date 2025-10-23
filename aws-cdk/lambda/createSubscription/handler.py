@@ -2,17 +2,15 @@ import json
 import os
 import uuid
 import boto3
-from decimal import Decimal
-from boto3.dynamodb.conditions import Key
 from datetime import datetime
 
 subscriptions_table_name = os.environ["SUBSCRIPTIONS_TABLE"]
-artists_table_name = os.environ["ARTISTS_TABLE"]
-genres_table_name = os.environ["GENRES_TABLE"]
 dynamodb = boto3.resource("dynamodb")
 subscriptions_table = dynamodb.Table(subscriptions_table_name)
-genres_table = dynamodb.Table(genres_table_name)
-artists_table = dynamodb.Table(artists_table_name)
+sns = boto3.client('sns')
+
+def get_or_create_topic(topic_name):
+    return sns.create_topic(Name=topic_name)['TopicArn']
 
 def lambda_handler(event, context):
     headers = {"Access-Control-Allow-Origin": "*"}
@@ -32,53 +30,40 @@ def lambda_handler(event, context):
         body = json.loads(event.get('body', '{}'))
         target_type = body.get('targetType')
         target_id = body.get('targetId')
+        target_name = body.get('targetName')
         if not target_id or not target_type:
             return {
                 "statusCode": 400,
                 "headers": headers,
                 "body": json.dumps({"message": "Target is required"})
             }
-        if target_type == 'artist':
-            response = artists_table.query(
-                IndexName='ArtistIDIndex',
-                KeyConditionExpression=Key('artist_id').eq(target_id)
-            )
-        elif target_type == 'genre':
-            response = genres_table.query(
-                KeyConditionExpression=Key("genre").eq(target_id)
-            )
-        else: 
-            return {
-                "statusCode": 400,
-                "headers": headers,
-                "body": json.dumps({"message": "Target type must be genre or artist"})
-            }
-        
-        items = response.get("Items")
-        if not items:
-            return {
-                "statusCode": 400,
-                "headers": headers,
-                "body": json.dumps({"message": "Target is not found"})
-            }
-        target = items[0]
-
+        target_key = f"{target_type}_{target_id}"
         subscriptions_table.put_item(
             Item={
                 "subscription_id": str(uuid.uuid4()),
-                "target": f"{target_type}#{target_id}",
+                "target": target_key,
                 "user_id": user_id,
                 "user_email": user_email,
                 "subscription_type": target_type,
-                "target_name": target['artist_name'] if target_type == 'artist' else target['genre'],
+                "target_name":target_name,
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
         )
+        topic_arn = get_or_create_topic(target_key)
+
+        try:
+            sns.subscribe(TopicArn=topic_arn, Protocol="email", Endpoint=user_email)
+        except Exception as e:
+            print(f"Failed to subscribe send_emails lambda to {topic_arn}: {e}")
 
         return {
             "statusCode": 201,
             "headers": headers,
-            "body": json.dumps({"message": "Subscription created successfully"})
+            "body": json.dumps({
+                "message": "Subscribed",
+                "target": target_key,
+                "topicArn": topic_arn,
+            })
         }
 
     except Exception as e:
