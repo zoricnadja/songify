@@ -9,7 +9,6 @@ from constructs import Construct
 
 from songify_constructs.tracks_construct import TracksConstruct
 from songify_constructs.subscriptions_construct import SubscriptionsConstruct
-from songify_constructs.emails_construct import EmailsConstruct
 
 class BackendStack(Stack):
 
@@ -143,14 +142,6 @@ class BackendStack(Stack):
             write_capacity=write_capacity
         )
 
-        #Topics 
-        # topics_table = dynamodb.Table(
-        #     self, "TopicsTable",
-        #     partition_key=dynamodb.Attribute(name="target", type=dynamodb.AttributeType.STRING),
-        #     table_name="TopicsTable",
-        #     removal_policy=RemovalPolicy.DESTROY
-        # )
-
         # ----------------------------
         # Cognito User Pool
         # ----------------------------
@@ -241,4 +232,3 @@ class BackendStack(Stack):
 
         TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table)
         SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table, genres_table, artists_table)
-        # EmailsConstruct(self, "EmailsConstruct", subscriptions_table, topic)

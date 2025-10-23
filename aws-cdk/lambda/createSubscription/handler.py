@@ -5,11 +5,8 @@ import boto3
 from datetime import datetime
 
 subscriptions_table_name = os.environ["SUBSCRIPTIONS_TABLE"]
-# topics_table_name = os.environ["TOPICS_TABLE"]
 dynamodb = boto3.resource("dynamodb")
 subscriptions_table = dynamodb.Table(subscriptions_table_name)
-# topics_table = dynamodb.Table(topics_table_name)
-# send_emails_fn_arn = os.environ["SEND_EMAILS_FN_ARN"]
 sns = boto3.client('sns')
 
 def get_or_create_topic(topic_name):

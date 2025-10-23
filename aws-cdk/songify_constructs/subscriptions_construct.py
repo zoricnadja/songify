@@ -3,12 +3,12 @@ from aws_cdk import aws_apigateway as apigateway,aws_iam as iam, aws_lambda as _
 from utils.create_lambda import create_lambda_function
 
 class SubscriptionsConstruct(Construct):
-    """
-    SubscriptionsConstruct:
-    - Kreira Lambda koja obrađuje POST /subscriptions (create subscription)
-    - Daje toj Lambdi pristup subscriptions_table i topics_table
-    - Daje toj Lambdi potrebne SNS permisije (create topic, subscribe)
-    - Dodaje API resource /subscriptions i POST method
+    """ 
+    SubscriptionsConstruct: 
+    - Creates a Lambda that processes POST /subscriptions (create subscription) 
+    - Gives that Lambda access to subscriptions_table and topics_table 
+    - Gives that Lambda the necessary SNS permissions (create topic, subscribe) 
+    - Adds API resource /subscriptions and POST method 
     """
     def __init__(
         self,
@@ -18,7 +18,6 @@ class SubscriptionsConstruct(Construct):
         authorizer,
         subscriptions_table: dynamodb.Table,
         topics_table: dynamodb.Table,
-        send_emails_fn_arn: str,
     ):
         super().__init__(scope, id)
 
