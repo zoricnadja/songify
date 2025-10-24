@@ -3,6 +3,7 @@ import { AlbumService } from '../album.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AlbumModalComponent } from '../album-modal/album-modal.component';
 import { Album } from '../models/album.model';
+import { TrackService } from '../../track/track.service';
 
 @Component({
   selector: 'app-album-list',
@@ -15,6 +16,7 @@ export class AlbumListComponent implements OnInit {
 
   constructor(
     private albumService: AlbumService,
+    private trackService: TrackService,
     private dialog: MatDialog
   ) {}
 
@@ -36,8 +38,14 @@ export class AlbumListComponent implements OnInit {
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.albumService.createAlbum(result).subscribe(
-            () => this.loadAlbums(),
+          this.albumService.createAlbum(result.album).subscribe(
+            (response) => {
+              for (const track of result.tracks) {
+                track.albumId = response.album_id;
+                this.trackService.createTrack(track).subscribe();
+              }
+              this.loadAlbums();
+            },
             (error) => alert(error.error.message)
           );
         }
@@ -53,7 +61,7 @@ export class AlbumListComponent implements OnInit {
       .afterClosed()
       .subscribe((result) => {
         if (result) {
-          this.albumService.updateAlbum(album.id, result).subscribe(
+          this.albumService.updateAlbum(album.id, result.album).subscribe(
             () => this.loadAlbums(),
             (error) => alert(error.error.message)
           );

@@ -23,8 +23,8 @@ export class TrackService {
     return this.httpClient.put<any>(`${this.apiUrl}/${id}`, track);
   }
 
-  deleteTrack(id: string): Observable<any> {
-    return this.httpClient.delete<any>(`${this.apiUrl}/${id}`);
+  deleteTrack(id: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.apiUrl}/tracks/${id}`);
   }
 
   uploadFile(file: File): Observable<any> {

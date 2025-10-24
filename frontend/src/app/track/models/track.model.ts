@@ -4,7 +4,7 @@ import { Artist } from '../../artist/models/artist.model';
 export interface Track {
   id: string;
   title: string;
-  album: Album;
+  album?: Album;
   artists: Artist[];
   genres: string[];
   file: FileInfo;
