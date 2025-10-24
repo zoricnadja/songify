@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { Artist, ArtistDTO } from './models/artist.model';
@@ -12,8 +12,12 @@ export class ArtistService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getArtists(): Observable<Artist[]> {
-    return this.httpClient.get<Artist[]>(`${this.apiUrl}/artists`);
+  getArtists(genre: string | null = null): Observable<Artist[]> {
+    let params = new HttpParams();
+    if (genre) {
+      params = params.set('genre', genre);
+    }
+    return this.httpClient.get<Artist[]>(`${this.apiUrl}/artists`, { params });
   }
 
   createArtist(artist: ArtistDTO): Observable<void> {
