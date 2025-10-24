@@ -3,13 +3,7 @@ from aws_cdk import aws_apigateway as apigateway,aws_iam as iam, aws_lambda as _
 from utils.create_lambda import create_lambda_function
 
 class SubscriptionsConstruct(Construct):
-    """ 
-    SubscriptionsConstruct: 
-    - Creates a Lambda that processes POST /subscriptions (create subscription) 
-    - Gives that Lambda access to subscriptions_table and topics_table 
-    - Gives that Lambda the necessary SNS permissions (create topic, subscribe) 
-    - Adds API resource /subscriptions and POST method 
-    """
+    
     def __init__(
         self,
         scope: Construct,
@@ -27,7 +21,7 @@ class SubscriptionsConstruct(Construct):
             self,
             "CreateSubscriptionLambda",
             "handler.lambda_handler",
-            "lambda/createSubscription",
+            "lambda/subscription/createSubscription",
             [],
             {
                 "SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
@@ -62,7 +56,7 @@ class SubscriptionsConstruct(Construct):
             self,
             "GetSubscriptionsLambda",
             "handler.lambda_handler",
-            "lambda/getSubscriptions",
+            "lambda/subscription/getSubscriptions",
             [],
             {"SUBSCRIPTIONS_TABLE": subscriptions_table.table_name}
         )
@@ -80,14 +74,19 @@ class SubscriptionsConstruct(Construct):
             self,
             "DeleteSubscriptionLambda",
             "handler.lambda_handler",
-            "lambda/deleteSubscription",
+            "lambda/subscription/deleteSubscription",
             [],
             {
              "SUBSCRIPTIONS_TABLE": subscriptions_table.table_name,
             }
         )
         subscriptions_table.grant_read_write_data(delete_subscription_lambda)
-
+        delete_subscription_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["sns:Unsubscribe"],
+                resources=["*"]
+            )
+        )
         subscriptions_id_resource = subscriptions_api_resource.add_resource("{id}")
         subscriptions_id_resource.add_method(
             "DELETE",

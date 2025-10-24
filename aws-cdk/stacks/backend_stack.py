@@ -6,12 +6,15 @@ from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_sns as sns
 from aws_cdk import aws_sns_subscriptions as subs
 from aws_cdk import aws_s3 as s3
+from aws_cdk import aws_iam as iam
 from constructs import Construct
+from utils.create_lambda import create_lambda_function
 from songify_constructs.albums_construct import AlbumsConstruct
 from songify_constructs.artists_construct import ArtistsConstruct
 from songify_constructs.genres_construct import GenresConstruct
 from songify_constructs.subscriptions_construct import SubscriptionsConstruct
 from songify_constructs.tracks_construct import TracksConstruct
+from songify_constructs.notifications_construct import NotificationsConstruct
 
 
 class BackendStack(Stack):
@@ -264,9 +267,15 @@ class BackendStack(Stack):
             )],
             removal_policy=RemovalPolicy.DESTROY
         )
+        content_created_topic = sns.Topic(
+            self,
+            "ContentCreatedTopic",
+            topic_name="content-created",
+        )
 
-        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, artists_table, albums_table, tracks_bucket, region=self.region)
+        NotificationsConstruct(self, "NotificationsConstruct", tracks_table, subscriptions_table, content_created_topic)
+        TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, artists_table, albums_table, tracks_bucket, content_created_topic, region=self.region)
         GenresConstruct(self, "GenresConstruct", api, authorizer, genres_table)
         ArtistsConstruct(self, "ArtistsConstruct", api, authorizer, artists_table)
-        AlbumsConstruct(self, "AlbumsConstruct", api, authorizer, albums_table, artists_table)
+        AlbumsConstruct(self, "AlbumsConstruct", api, authorizer, albums_table, artists_table, content_created_topic)
         SubscriptionsConstruct(self, "SubscriptionsConstruct", api, authorizer, subscriptions_table)

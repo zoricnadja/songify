@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CreateSubscription } from '../subscription.model';
+import { GenreService } from '../../genre/genre.service';
+import { ArtistService } from '../../artist/artist.service';
+import { Artist } from '../../artist/models/artist.model';
 
 @Component({
   selector: 'app-create-subscription',
@@ -12,13 +15,17 @@ import { CreateSubscription } from '../subscription.model';
 export class CreateSubscriptionComponent implements OnInit {
   form: FormGroup;
   typeOptions: string[] = ['artist', 'genre'];
-  artists: { id: string; name: string }[] = [];
+  artists: Artist[] = [];
   genres: string[] = [];
+  selectedArtistIds: string[] = [];
+  selectedGenres: string[] = [];
   dropdownOptions: string[] = [];
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<CreateSubscriptionComponent>
+    private dialogRef: MatDialogRef<CreateSubscriptionComponent>,
+    private genreService: GenreService,
+    private artistService: ArtistService
   ) {
     this.form = this.fb.group({
       type: ['artist', Validators.required],
@@ -37,16 +44,15 @@ export class CreateSubscriptionComponent implements OnInit {
 
   loadDropdownOptions(): void {
     const type = this.form.get('type')?.value;
-
-    // TODO: services
     if (type === 'artist') {
-      this.artists = [
-        { id: 'artist123', name: 'ArtistName' },
-        { id: 'artist1234', name: 'ArtistName2' },
-      ];
+      this.artistService.getArtists().subscribe((artists) => {
+        this.artists = artists;
+      });
       this.dropdownOptions = this.artists.map((a) => a.name);
     } else {
-      this.genres = ['pop', 'rock'];
+      this.genreService.getAll().subscribe((genres) => {
+        this.genres = genres;
+      });
       this.dropdownOptions = this.genres;
     }
   }

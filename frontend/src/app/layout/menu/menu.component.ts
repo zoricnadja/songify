@@ -13,6 +13,7 @@ export class MenuComponent {
   menuItems: MenuItem[] = [
     { path: '/', label: 'Home', roles: true },
     { path: '/admin', label: 'Admin Panel', roles: ['admin'] },
+    { path: '/subscriptions', label: 'Subscriptions', roles: ['user'] },
   ];
   constructor(
     private router: Router,
