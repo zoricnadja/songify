@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { Album, AlbumDTO } from './models/album.model';
@@ -12,8 +12,12 @@ export class AlbumService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getAlbums(): Observable<Album[]> {
-    return this.httpClient.get<Album[]>(`${this.apiUrl}/albums`);
+  getAlbums(genre: string | null = null): Observable<Album[]> {
+    let params = new HttpParams();
+    if (genre) {
+      params = params.set('genre', genre);
+    }
+    return this.httpClient.get<Album[]>(`${this.apiUrl}/albums`, { params });
   }
   createAlbum(album: AlbumDTO): Observable<{ album_id: string }> {
     return this.httpClient.post<{ album_id: string }>(`${this.apiUrl}/albums`, album);

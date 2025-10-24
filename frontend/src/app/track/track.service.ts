@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
 import { Track, TrackDTO } from './models/track.model';
@@ -11,8 +11,16 @@ export class TrackService {
   private apiUrl = environment.apiUrl;
   constructor(private httpClient: HttpClient) {}
 
-  getTracks(): Observable<Track[]> {
-    return this.httpClient.get<Track[]>(`${this.apiUrl}/tracks`);
+  getTracks(artistId: string | null = null, albumId: string | null = null): Observable<Track[]> {
+    let params = new HttpParams();
+    if (artistId) {
+      params = params.set('artist_id', artistId);
+    }
+    if (albumId) {
+      params = params.set('album_id', albumId);
+    }
+
+    return this.httpClient.get<Track[]>(`${this.apiUrl}/tracks`, { params });
   }
 
   createTrack(track: TrackDTO): Observable<void> {

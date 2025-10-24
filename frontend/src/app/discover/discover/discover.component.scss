@@ -1,0 +1,34 @@
+.discover-container {
+  padding: 24px;
+}
+.album-list, .artist-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.track-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+}
+.track-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+}
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+audio {
+  margin-top: 8px;
+  width: 250px;
+}
+

@@ -6,6 +6,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { SubscriptionsComponent } from './subscription/subscriptions/subscriptions.component';
 import { TrackPlayerListComponent } from './track/track-player-list/track-player-list.component';
+import { DiscoverComponent } from './discover/discover/discover.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'admin', component: AdminPanelComponent },
   { path: 'subscriptions', component: SubscriptionsComponent },
   { path: 'tracks', component: TrackPlayerListComponent },
+  { path: 'discover', component: DiscoverComponent },
 ];
 
 @NgModule({
