@@ -28,3 +28,35 @@
     <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
   </div>
 </form>
+<div *ngIf="!data?.album">
+  <h3>Tracks</h3>
+  <div *ngFor="let track of tracks; let i = index" class="track-form">
+    <mat-form-field appearance="fill">
+      <mat-label>Track Title</mat-label>
+      <input matInput [(ngModel)]="track.title" name="trackTitle{{ i }}" required />
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Artists</mat-label>
+      <mat-select [(ngModel)]="track.artistIds" name="trackArtists{{ i }}" multiple>
+        <mat-option *ngFor="let artist of artists" [value]="artist.id">{{ artist.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Genres</mat-label>
+      <mat-select [(ngModel)]="track.genres" name="trackGenres{{ i }}" multiple>
+        <mat-option *ngFor="let genre of genres" [value]="genre">{{ genre }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="file-upload">
+      <label for="image-upload">Image:</label>
+      <input id="image-upload" type="file" accept="image/*" (change)="onTrackImageChange($event, track)" required />
+    </div>
+    <div class="file-upload">
+      <label for="file-upload">Track File:</label>
+      <input id="file-upload" type="file" accept="audio/*" (change)="onTrackFileChange($event, track)" required />
+    </div>
+    <button mat-button color="warn" type="button" (click)="removeTrack(i)">Remove Track</button>
+    <mat-divider></mat-divider>
+  </div>
+  <button mat-raised-button color="accent" type="button" (click)="addTrack()">Add Track</button>
+</div>
