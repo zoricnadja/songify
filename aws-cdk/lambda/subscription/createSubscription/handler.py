@@ -38,6 +38,12 @@ def lambda_handler(event, context):
                 "body": json.dumps({"message": "Target is required"})
             }
         target_key = f"{target_type}_{target_id}"
+        topic_arn = get_or_create_topic(target_key)
+
+        subscription_response = sns.subscribe(TopicArn=topic_arn, Protocol="email", Endpoint=user_email, ReturnSubscriptionArn=True)
+
+        subscription_arn = subscription_response.get("SubscriptionArn", "PendingConfirmation")
+
         subscriptions_table.put_item(
             Item={
                 "subscription_id": str(uuid.uuid4()),
@@ -46,15 +52,14 @@ def lambda_handler(event, context):
                 "user_email": user_email,
                 "subscription_type": target_type,
                 "target_name":target_name,
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "subscription_arn": subscription_arn
             }
         )
-        topic_arn = get_or_create_topic(target_key)
 
-        try:
-            sns.subscribe(TopicArn=topic_arn, Protocol="email", Endpoint=user_email)
-        except Exception as e:
-            print(f"Failed to subscribe send_emails lambda to {topic_arn}: {e}")
+        message = "Subscription created successfully."
+        if subscription_arn == "PendingConfirmation":
+            message += " Please check your email to confirm the subscription."
 
         return {
             "statusCode": 201,
@@ -63,6 +68,7 @@ def lambda_handler(event, context):
                 "message": "Subscribed",
                 "target": target_key,
                 "topicArn": topic_arn,
+                "subscription_arn": subscription_arn
             })
         }
 

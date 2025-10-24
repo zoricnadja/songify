@@ -273,17 +273,6 @@ class BackendStack(Stack):
             topic_name="content-created",
         )
 
-        notify_lambda = create_lambda_function(
-            self,
-            "NotifySubscribersLambda",
-            "handler.lambda_handler",
-            "lambda/notifySubscribers",
-            [],
-            {},
-        )
-        # subscriptions_table.grant_read_data(notify_lambda)
-        content_created_topic.add_subscription(subs.LambdaSubscription(notify_lambda))
-
         NotificationsConstruct(self, "NotificationsConstruct", tracks_table, subscriptions_table, content_created_topic)
         TracksConstruct(self, "TracksConstruct", api, authorizer, scores_table, tracks_table, artists_table, albums_table, tracks_bucket, content_created_topic, region=self.region)
         GenresConstruct(self, "GenresConstruct", api, authorizer, genres_table)

@@ -1,4 +1,5 @@
 from aws_cdk import aws_apigateway as apigateway
+from aws_cdk import aws_iam as iam
 from constructs import Construct
 from utils.create_lambda import create_lambda_function
 
@@ -17,7 +18,19 @@ class AlbumsConstruct(Construct):
         )
         albums_table.grant_read_write_data(create_album_lambda)
         content_created_topic.grant_publish(create_album_lambda)
-
+        
+        create_album_lambda.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "sns:CreateTopic",
+                    "sns:Subscribe",
+                    "sns:ListTopics",
+                    "sns:Publish",
+                    "sns:GetTopicAttributes",
+                ],
+                resources=["*"],
+            )
+        )
         get_albums_lambda = create_lambda_function(
             self,
             "GetAlbumsLambda",

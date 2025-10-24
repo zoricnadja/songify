@@ -42,7 +42,7 @@ class TracksConstruct(Construct):
             self,
             "RateTrackLambda",
             "handler.lambda_handler",
-            "lambda/rateTrack",
+            "lambda/score/rateTrack",
             [],
             {
                 "SCORE_TABLE": score_table.table_name,
@@ -57,7 +57,7 @@ class TracksConstruct(Construct):
             self,
             "GetTrackScoreLambda",
             "handler.lambda_handler",
-            "lambda/getTrackScore",
+            "lambda/score/getTrackScore",
             [],
             {
                 "SCORE_TABLE": score_table.table_name,

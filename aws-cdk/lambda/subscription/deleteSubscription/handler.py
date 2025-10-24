@@ -5,6 +5,7 @@ from boto3.dynamodb.conditions import Key, Attr
 
 subscriptions_table_name = os.environ["SUBSCRIPTIONS_TABLE"]
 dynamodb = boto3.resource("dynamodb")
+sns = boto3.client('sns')
 subscriptions_table = dynamodb.Table(subscriptions_table_name)
 
 def lambda_handler(event, context):
@@ -44,7 +45,13 @@ def lambda_handler(event, context):
             }
 
         subscription = items[0]
-
+        subscription_arn = subscription.get("subscription_arn")
+        if subscription_arn and subscription_arn != "PendingConfirmation":
+            try:
+                sns.unsubscribe(SubscriptionArn=subscription_arn)
+                print(f"Unsubscribed SNS ARN: {subscription_arn}")
+            except Exception as sns_error:
+                print(f"Error unsubscribing SNS: {sns_error}")
         subscriptions_table.delete_item(
             Key={
                 "target": subscription["target"],
