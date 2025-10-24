@@ -2,6 +2,7 @@ from aws_cdk import aws_dynamodb as dynamodb
 from aws_cdk import aws_apigateway as apigateway
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_s3 as s3
+from aws_cdk import aws_sns as sns
 from constructs import Construct
 from utils.create_lambda import create_lambda_function
 
@@ -17,7 +18,8 @@ class TracksConstruct(Construct):
         artists_table: dynamodb.Table,
         albums_table: dynamodb.Table,
         tracks_bucket: s3.Bucket,
-        region='eu-central-1'
+        content_created_topic: sns.Topic,
+        region='eu-central-1',
     ):
         super().__init__(scope, id)
 
@@ -69,7 +71,8 @@ class TracksConstruct(Construct):
             handler="handler.handler",
             include_dir="lambda/track/create_track",
             layers=[],
-            environment={"TRACKS_TABLE_NAME": tracks_table.table_name}
+            environment={"TRACKS_TABLE_NAME": tracks_table.table_name,
+                         "CONTENT_CREATED_TOPIC_ARN": content_created_topic.topic_arn,}
         )
         tracks_table.grant_read_write_data(create_track_lambda)
         tracks_bucket.grant_read_write(create_track_lambda)
@@ -86,6 +89,7 @@ class TracksConstruct(Construct):
                 resources=["*"],
             )
         )
+        content_created_topic.grant_publish(create_track_lambda)
 
         get_tracks_lambda = create_lambda_function(
             self,

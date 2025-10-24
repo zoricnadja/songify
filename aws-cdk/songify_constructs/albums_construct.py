@@ -3,7 +3,7 @@ from constructs import Construct
 from utils.create_lambda import create_lambda_function
 
 class AlbumsConstruct(Construct):
-    def __init__(self, scope: Construct, id: str, api: apigateway.RestApi, authorizer, albums_table, artists_table):
+    def __init__(self, scope: Construct, id: str, api: apigateway.RestApi, authorizer, albums_table, artists_table, content_created_topic):
         super().__init__(scope, id)
 
         create_album_lambda = create_lambda_function(
@@ -12,9 +12,11 @@ class AlbumsConstruct(Construct):
             handler="handler.handler",
             include_dir="lambda/album/create_album",
             layers=[],
-            environment={"ALBUMS_TABLE_NAME": albums_table.table_name}
+            environment={"ALBUMS_TABLE_NAME": albums_table.table_name,
+                         "CONTENT_CREATED_TOPIC_ARN": content_created_topic.topic_arn,}
         )
         albums_table.grant_read_write_data(create_album_lambda)
+        content_created_topic.grant_publish(create_album_lambda)
 
         get_albums_lambda = create_lambda_function(
             self,
