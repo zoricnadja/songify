@@ -14,6 +14,7 @@ import { TrackModule } from './track/track.module';
 import { AdminModule } from './admin/admin.module';
 import { MaterialModule } from './infrastructure/material/material.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { DiscoverModule } from './discover/discover.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,6 +30,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     MaterialModule,
     TrackModule,
     SubscriptionModule,
+    DiscoverModule,
   ],
   providers: [
     AuthGuard,
