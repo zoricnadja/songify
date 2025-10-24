@@ -1,0 +1,28 @@
+.track-player-list-container {
+  padding: 24px;
+}
+.track-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 16px;
+}
+.track-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 16px;
+}
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+audio {
+  margin-top: 8px;
+  width: 300px;
+}
+

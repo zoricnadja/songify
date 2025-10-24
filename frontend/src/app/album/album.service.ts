@@ -15,8 +15,8 @@ export class AlbumService {
   getAlbums(): Observable<Album[]> {
     return this.httpClient.get<Album[]>(`${this.apiUrl}/albums`);
   }
-  createAlbum(album: AlbumDTO): Observable<void> {
-    return this.httpClient.post<void>(`${this.apiUrl}/albums`, album);
+  createAlbum(album: AlbumDTO): Observable<{ album_id: string }> {
+    return this.httpClient.post<{ album_id: string }>(`${this.apiUrl}/albums`, album);
   }
   updateAlbum(id: string, album: AlbumDTO): Observable<void> {
     return this.httpClient.put<void>(`${this.apiUrl}/albums/${id}`, album);

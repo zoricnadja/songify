@@ -6,6 +6,7 @@ import { LoginComponent } from './auth/login/login.component';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { SubscriptionsComponent } from './subscription/subscriptions/subscriptions.component';
 import { AuthGuard } from './auth/auth.guard';
+import { TrackPlayerListComponent } from './track/track-player-list/track-player-list.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -24,6 +25,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: ['user'] },
   },
+  { path: 'tracks', component: TrackPlayerListComponent },
 ];
 
 @NgModule({
