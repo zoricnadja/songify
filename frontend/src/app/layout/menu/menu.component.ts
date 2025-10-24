@@ -14,6 +14,7 @@ export class MenuComponent {
     { path: '/', label: 'Home', roles: true },
     { path: '/admin', label: 'Admin Panel', roles: ['admin'] },
     { path: '/subscriptions', label: 'Subscriptions', roles: ['user'] },
+    { path: '/discover', label: 'Discover', roles: ['user', 'admin'] },
   ];
   constructor(
     private router: Router,

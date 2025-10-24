@@ -42,6 +42,17 @@ export class TrackService {
   }
 
   getPresignedUrl(fileName: string, fileType: string): Observable<{ url: string; key: string }> {
-    return this.httpClient.post<{ url: string; key: string }>(`${this.apiUrl}/s3/presign-upload`, { fileName, fileType });
+    return this.httpClient.post<{ url: string; key: string }>(`${this.apiUrl}/s3/presign-upload`, {
+      fileName,
+      fileType,
+    });
+  }
+
+  getTrackScore(trackId: string): Observable<any> {
+    return this.httpClient.get(`${this.apiUrl}/tracks/${trackId}/score`);
+  }
+
+  rateTrack(trackId: string, score: number): Observable<any> {
+    return this.httpClient.post(`${this.apiUrl}/tracks/${trackId}/score`, { score });
   }
 }

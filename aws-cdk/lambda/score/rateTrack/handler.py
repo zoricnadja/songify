@@ -60,7 +60,7 @@ def lambda_handler(event, context):
             Item={
                 "user_id": user_id,
                 "track_id": track_id,
-                "genre": track['genre'],
+                "genres": track['genres'],
                 "score": Decimal(str(score)),
                 "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }

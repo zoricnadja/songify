@@ -26,8 +26,18 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: ['user'] },
   },
-  { path: 'tracks', component: TrackPlayerListComponent },
-  { path: 'discover', component: DiscoverComponent },
+  {
+    path: 'tracks',
+    component: TrackPlayerListComponent,
+    canActivate: [AuthGuard],
+    data: { role: ['user', 'admin'] },
+  },
+  {
+    path: 'discover',
+    component: DiscoverComponent,
+    canActivate: [AuthGuard],
+    data: { role: ['user', 'admin'] },
+  },
 ];
 
 @NgModule({

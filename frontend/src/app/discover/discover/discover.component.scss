@@ -32,3 +32,22 @@ audio {
   width: 250px;
 }
 
+.rating-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+
+  button {
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background: #f6f6f6;
+
+    &.active {
+      background-color: #ffd6d6;
+      border-color: #ff4b4b;
+      font-weight: bold;
+    }
+  }
+}
