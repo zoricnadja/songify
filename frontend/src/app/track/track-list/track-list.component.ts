@@ -47,7 +47,7 @@ export class TrackListComponent implements OnInit {
     });
   }
 
-  deleteTrack(track: any) {
+  deleteTrack(track: Track) {
     if (confirm('Are you sure you want to delete this track?')) {
       this.trackService.deleteTrack(track.id).subscribe(() => this.loadTracks());
     }

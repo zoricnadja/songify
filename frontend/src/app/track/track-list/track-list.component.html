@@ -20,7 +20,7 @@
     </ng-container>
     <ng-container matColumnDef="album">
       <th mat-header-cell *matHeaderCellDef>Album</th>
-      <td mat-cell *matCellDef="let track">{{ track.album || '-' }}</td>
+      <td mat-cell *matCellDef="let track">{{ track.album?.title || '-' }}</td>
     </ng-container>
     <ng-container matColumnDef="image">
       <th mat-header-cell *matHeaderCellDef>Image</th>
