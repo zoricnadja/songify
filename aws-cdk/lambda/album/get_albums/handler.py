@@ -19,23 +19,12 @@ def handler(event, context):
             response = album_table.query(
                 KeyConditionExpression=Key('genre').eq(genre)
             )
-            albums = response.get('Items', [])
-            return {'statusCode': 200, 'body': json.dumps(albums), 'headers': CORS_HEADERS}
+            items = response.get('Items', [])
+            return {'statusCode': 200, 'body': json.dumps(get_albums(items)), 'headers': CORS_HEADERS}
         else:
             response = album_table.scan()
             items = response.get('Items', [])
-
-            albums = {}
-            for item in items:
-                album_id = item['album_id']
-                if album_id not in albums:
-                    albums[album_id] = {
-                        'id': album_id,
-                        'title': item.get('title'),
-                        'artists': get_artists(item.get('artist_ids', [])),
-                        'genres': item.get('genres')
-                    }
-            return {'statusCode': 200, 'body': json.dumps(list(albums.values())), 'headers': CORS_HEADERS}
+            return {'statusCode': 200, 'body': json.dumps(get_albums(items)), 'headers': CORS_HEADERS}
     except Exception as e:
         return {'statusCode': 500, 'body': str(e), 'headers': CORS_HEADERS}
 
@@ -56,3 +45,16 @@ def get_artists(artist_ids):
                 'genres': artist.get('genres', [])
             })
     return artists
+
+def get_albums(items):
+    albums = {}
+    for item in items:
+        album_id = item['album_id']
+        if album_id not in albums:
+            albums[album_id] = {
+                'id': album_id,
+                'title': item.get('title'),
+                'artists': get_artists(item.get('artist_ids', [])),
+                'genres': item.get('genres')
+            }
+    return list(albums.values())
