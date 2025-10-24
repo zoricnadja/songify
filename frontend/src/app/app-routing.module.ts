@@ -5,6 +5,7 @@ import { HomeComponent } from './layout/home/home.component';
 import { LoginComponent } from './auth/login/login.component';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { SubscriptionsComponent } from './subscription/subscriptions/subscriptions.component';
+import { TrackPlayerListComponent } from './track/track-player-list/track-player-list.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'admin', component: AdminPanelComponent },
   { path: 'subscriptions', component: SubscriptionsComponent },
+  { path: 'tracks', component: TrackPlayerListComponent },
 ];
 
 @NgModule({
