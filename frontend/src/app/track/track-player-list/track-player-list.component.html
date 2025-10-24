@@ -1,0 +1,16 @@
+<div class="track-player-list-container">
+  <h2>Tracks</h2>
+  <div *ngFor="let track of tracks" class="track-card">
+    <div class="track-info">
+      <img *ngIf="track.imageUrl" [src]="track.imageUrl" alt="Track Image" class="track-image" />
+      <div>
+        <h3>{{ track.title }}</h3>
+        <div><strong>Artists: </strong> <span *ngFor="let artist of track.artists; let last = last">{{ artist.name }}<span *ngIf="!last">, </span></span></div>
+        <div><strong>Genres: </strong> <span *ngFor="let genre of track.genres; let last = last">{{ genre }}<span *ngIf="!last">, </span></span></div>
+        <div *ngIf="track.album"><strong>Album: </strong> {{ track.album?.title }}</div>
+      </div>
+    </div>
+    <audio *ngIf="track.trackUrl" controls [src]="track.trackUrl"></audio>
+  </div>
+</div>
+
